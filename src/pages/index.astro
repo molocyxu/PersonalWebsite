@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SolarSystem from '../components/SolarSystem';
+import TimeDisplay from '../components/TimeDisplay';
+import NameDisplay from '../components/NameDisplay';
+import PlanetNav from '../components/PlanetNav';
+import MoveAroundHint from '../components/MoveAroundHint';
+---
+
+<Layout title="home">
+  <SolarSystem client:load />
+  <TimeDisplay client:load />
+  <NameDisplay client:load />
+  <PlanetNav client:load />
+  <MoveAroundHint client:load />
+</Layout>
