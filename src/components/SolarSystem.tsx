@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -104,12 +104,19 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
   const labelRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const startTimeRef = useRef(Date.now());
+  const { camera } = useThree();
 
+  // Pre-calculate rotation speeds for performance
+  const rotationSpeedY = useMemo(() => size < 0.6 ? 0.02 : size < 1.0 ? 0.015 : 0.01, [size]);
+  const rotationSpeedX = useMemo(() => size < 0.6 ? 0.015 : size < 1.0 ? 0.012 : 0.008, [size]);
+  const speedMultiplier = useMemo(() => size < 0.6 ? 0.05 : 0.1, [size]);
+  
+  // Cache calculations
+  const scaledPeriod = useMemo(() => period * speedMultiplier, [period, speedMultiplier]);
+  
   useFrame(() => {
     if (meshRef.current && labelRef.current) {
       // Slow down smaller planets (Mercury, Venus, Mars)
-      const speedMultiplier = size < 0.6 ? 0.05 : 0.1;
-      const scaledPeriod = period * speedMultiplier;
       const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
       const angle = initialAngle + (elapsedSeconds / scaledPeriod) * Math.PI * 2;
       
@@ -118,7 +125,10 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       
       meshRef.current.position.x = x;
       meshRef.current.position.z = z;
-      meshRef.current.rotation.y += 0.01;
+      
+      // Planet rotation on its own axis - both horizontal (Y) and vertical (X)
+      meshRef.current.rotation.y += rotationSpeedY;
+      meshRef.current.rotation.x += rotationSpeedX;
       
       // Position label relative to planet
       labelRef.current.position.x = x;
@@ -130,8 +140,8 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
   // Create highly detailed planet texture
   const createPlanetTexture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = 256; // Reduced from 512 for performance
+    canvas.height = 256; // Reduced from 512 for performance
     const ctx = canvas.getContext('2d')!;
     
     // Base gradient
@@ -141,13 +151,13 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
     gradient.addColorStop(0.9, '#000000');
     gradient.addColorStop(1, '#000000');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 256, 256);
     
-    if (name === 'Mercury') {
+      if (name === 'Mercury') {
       // Mercury: cratered surface with gray-brown tones
-      for (let i = 0; i < 200; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+      for (let i = 0; i < 120; i++) {
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 8 + 2;
         ctx.fillStyle = `rgba(${140 - Math.random() * 40}, ${120 - Math.random() * 30}, ${83 - Math.random() * 20}, 0.8)`;
         ctx.beginPath();
@@ -159,16 +169,16 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
         ctx.stroke();
       }
       // Add surface variations
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 30; i++) {
         ctx.fillStyle = `rgba(100, 90, 70, ${0.3 + Math.random() * 0.3})`;
-        ctx.fillRect(Math.random() * 512, Math.random() * 512, Math.random() * 30 + 10, Math.random() * 30 + 10);
+        ctx.fillRect(Math.random() * 256, Math.random() * 256, Math.random() * 30 + 10, Math.random() * 30 + 10);
       }
     } else if (name === 'Venus') {
       // Venus: thick cloud layers with yellow-orange tones
       // Base cloud layer
       for (let i = 0; i < 30; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 80 + 40;
         const alpha = 0.4 + Math.random() * 0.3;
         ctx.fillStyle = `rgba(255, 200, 100, ${alpha})`;
@@ -178,8 +188,8 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       }
       // Upper cloud layer
       for (let i = 0; i < 20; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 60 + 30;
         ctx.fillStyle = `rgba(255, 240, 180, 0.3)`;
         ctx.beginPath();
@@ -191,22 +201,22 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
         ctx.strokeStyle = `rgba(255, 220, 150, 0.4)`;
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(Math.random() * 512, Math.random() * 512, Math.random() * 50 + 30, 0, Math.PI * 2);
+        ctx.arc(Math.random() * 256, Math.random() * 256, Math.random() * 50 + 30, 0, Math.PI * 2);
         ctx.stroke();
       }
     } else if (name === 'Earth') {
       // Earth: detailed continents, oceans, and cloud cover
       // Oceans (base blue)
       ctx.fillStyle = '#1a4d7a';
-      ctx.fillRect(0, 0, 512, 512);
+      ctx.fillRect(0, 0, 256, 256);
       
-      // Continents with realistic shapes
+      // Continents with realistic shapes (scaled to 256)
       const continents = [
-        { x: 100, y: 150, w: 120, h: 80, color: '#2d5016' }, // North America
-        { x: 300, y: 120, w: 100, h: 90, color: '#1e3a0f' }, // Europe/Asia
-        { x: 200, y: 250, w: 80, h: 100, color: '#3d6b1f' }, // Africa
-        { x: 350, y: 300, w: 90, h: 70, color: '#2d5016' }, // Australia
-        { x: 150, y: 350, w: 110, h: 60, color: '#1e3a0f' }, // South America
+        { x: 50, y: 75, w: 60, h: 40, color: '#2d5016' }, // North America
+        { x: 150, y: 60, w: 50, h: 45, color: '#1e3a0f' }, // Europe/Asia
+        { x: 100, y: 125, w: 40, h: 50, color: '#3d6b1f' }, // Africa
+        { x: 175, y: 150, w: 45, h: 35, color: '#2d5016' }, // Australia
+        { x: 75, y: 175, w: 55, h: 30, color: '#1e3a0f' }, // South America
       ];
       
       continents.forEach(cont => {
@@ -224,8 +234,8 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       
       // Cloud cover
       for (let i = 0; i < 40; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 40 + 20;
         ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + Math.random() * 0.4})`;
         ctx.beginPath();
@@ -237,12 +247,12 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       // Surface variations
       for (let i = 0; i < 100; i++) {
         ctx.fillStyle = `rgba(${193 - Math.random() * 30}, ${68 - Math.random() * 20}, ${14 - Math.random() * 10}, 0.8)`;
-        ctx.fillRect(Math.random() * 512, Math.random() * 512, Math.random() * 40 + 20, Math.random() * 40 + 20);
+        ctx.fillRect(Math.random() * 256, Math.random() * 256, Math.random() * 40 + 20, Math.random() * 40 + 20);
       }
       // Craters
-      for (let i = 0; i < 150; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 12 + 3;
         ctx.fillStyle = `rgba(100, 40, 10, 0.7)`;
         ctx.beginPath();
@@ -257,18 +267,18 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       // Polar ice caps
       ctx.fillStyle = 'rgba(200, 220, 255, 0.8)';
       ctx.beginPath();
-      ctx.ellipse(256, 50, 100, 30, 0, 0, Math.PI * 2);
+      ctx.ellipse(128, 25, 50, 15, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(256, 462, 100, 30, 0, 0, Math.PI * 2);
+      ctx.ellipse(128, 231, 50, 15, 0, 0, Math.PI * 2);
       ctx.fill();
       // Surface streaks (wind patterns)
       for (let i = 0; i < 30; i++) {
         ctx.strokeStyle = `rgba(150, 50, 10, 0.4)`;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(Math.random() * 512, Math.random() * 512);
-        ctx.lineTo(Math.random() * 512, Math.random() * 512);
+        ctx.moveTo(Math.random() * 256, Math.random() * 256);
+        ctx.lineTo(Math.random() * 256, Math.random() * 256);
         ctx.stroke();
       }
     } else if (name === 'Jupiter') {
@@ -291,24 +301,24 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       
       bands.forEach(band => {
         ctx.fillStyle = band.color;
-        ctx.fillRect(0, band.y, 512, band.h);
+        ctx.fillRect(0, band.y, 256, band.h);
         // Add texture within bands
         for (let i = 0; i < 20; i++) {
           ctx.fillStyle = `rgba(${band.color === '#D8CA9D' ? '216, 202, 157' : band.color === '#C9A961' ? '201, 169, 97' : '184, 149, 90'}, ${0.3 + Math.random() * 0.3})`;
-          ctx.fillRect(Math.random() * 512, band.y + Math.random() * band.h, Math.random() * 60 + 30, Math.random() * 10 + 5);
+          ctx.fillRect(Math.random() * 256, band.y + Math.random() * band.h, Math.random() * 30 + 15, Math.random() * 5 + 3);
         }
       });
       
       // Great Red Spot
       ctx.fillStyle = 'rgba(200, 80, 60, 0.7)';
       ctx.beginPath();
-      ctx.ellipse(350, 200, 60, 40, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(175, 100, 30, 20, -0.3, 0, Math.PI * 2);
       ctx.fill();
       // Spot detail
       for (let i = 0; i < 15; i++) {
         ctx.fillStyle = `rgba(180, 60, 40, ${0.4 + Math.random() * 0.3})`;
         ctx.beginPath();
-        ctx.arc(350 + (Math.random() - 0.5) * 50, 200 + (Math.random() - 0.5) * 30, Math.random() * 8 + 3, 0, Math.PI * 2);
+        ctx.arc(175 + (Math.random() - 0.5) * 25, 100 + (Math.random() - 0.5) * 15, Math.random() * 4 + 2, 0, Math.PI * 2);
         ctx.fill();
       }
       
@@ -317,7 +327,7 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
         ctx.strokeStyle = `rgba(200, 180, 140, 0.3)`;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(Math.random() * 512, Math.random() * 512, Math.random() * 40 + 20, 0, Math.PI * 2);
+        ctx.arc(Math.random() * 256, Math.random() * 256, Math.random() * 40 + 20, 0, Math.PI * 2);
         ctx.stroke();
       }
     } else if (name === 'Uranus') {
@@ -325,17 +335,17 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       // Base color with gradient
       for (let i = 0; i < 10; i++) {
         ctx.fillStyle = `rgba(79, 208, 231, ${0.6 + Math.random() * 0.2})`;
-        ctx.fillRect(0, i * 51.2, 512, 51.2);
+        ctx.fillRect(0, i * 25.6, 256, 25.6);
       }
       // Subtle bands
       for (let i = 0; i < 8; i++) {
         ctx.fillStyle = `rgba(60, 180, 200, 0.3)`;
-        ctx.fillRect(0, i * 64, 512, 64);
+        ctx.fillRect(0, i * 32, 256, 32);
       }
       // Cloud features
       for (let i = 0; i < 30; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 50 + 25;
         ctx.fillStyle = `rgba(100, 230, 255, 0.2)`;
         ctx.beginPath();
@@ -347,12 +357,12 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       // Base deep blue
       for (let i = 0; i < 15; i++) {
         ctx.fillStyle = `rgba(75, 112, 221, ${0.7 + Math.random() * 0.2})`;
-        ctx.fillRect(0, i * 34, 512, 34);
+        ctx.fillRect(0, i * 17, 256, 17);
       }
       // White cloud features
       for (let i = 0; i < 40; i++) {
-        const x = Math.random() * 512;
-        const y = Math.random() * 512;
+        const x = Math.random() * 256;
+        const y = Math.random() * 256;
         const r = Math.random() * 35 + 15;
         ctx.fillStyle = `rgba(200, 220, 255, ${0.4 + Math.random() * 0.3})`;
         ctx.beginPath();
@@ -363,7 +373,7 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       for (let i = 0; i < 3; i++) {
         ctx.fillStyle = 'rgba(40, 60, 120, 0.6)';
         ctx.beginPath();
-        ctx.ellipse(Math.random() * 512, Math.random() * 512, Math.random() * 40 + 30, Math.random() * 25 + 20, Math.random() * Math.PI, 0, Math.PI * 2);
+        ctx.ellipse(Math.random() * 256, Math.random() * 256, Math.random() * 20 + 15, Math.random() * 12 + 10, Math.random() * Math.PI, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -374,18 +384,40 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
     return texture;
   };
 
-  const planetTexture = createPlanetTexture();
+  const planetTexture = useMemo(() => createPlanetTexture(), [name, color]);
 
   return (
     <group>
       <mesh
         ref={meshRef}
-        onClick={() => onClick(page)}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(page);
+        }}
+        onPointerOver={(e) => {
+          setHovered(true);
+          // Get screen coordinates of planet
+          const worldPosition = new THREE.Vector3();
+          meshRef.current?.getWorldPosition(worldPosition);
+          const vector = worldPosition.clone().project(camera);
+          const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+          
+          window.dispatchEvent(new CustomEvent('planet-hover', { 
+            detail: { 
+              isHovering: true, 
+              planetName: name,
+              planetData: { x, y, size: size * 50 }
+            } 
+          }));
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
         scale={hovered ? size * 1.3 : size}
       >
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           map={planetTexture}
           emissive={color}
@@ -421,7 +453,7 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       
       {/* Orbit path */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[distance - 0.1, distance + 0.1, 128]} />
+        <ringGeometry args={[distance - 0.1, distance + 0.1, 64]} />
         <meshBasicMaterial color={color} opacity={0.15} transparent side={THREE.DoubleSide} />
       </mesh>
     </group>
@@ -435,11 +467,14 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
   const [hovered, setHovered] = useState(false);
   const startTimeRef = useRef(Date.now());
   const planet = PLANETS.find(p => p.name === 'Saturn')!;
+  const { camera } = useThree();
 
+  // Cache calculations
+  const speedMultiplier = useMemo(() => planet.size < 0.6 ? 0.05 : 0.1, [planet.size]);
+  const scaledPeriod = useMemo(() => planet.period * speedMultiplier, [planet.period, speedMultiplier]);
+  
   useFrame(() => {
     if (meshRef.current && ringRef.current && labelRef.current) {
-      const speedMultiplier = planet.size < 0.6 ? 0.05 : 0.1;
-      const scaledPeriod = planet.period * speedMultiplier;
       const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
       const angle = planet.initialAngle + (elapsedSeconds / scaledPeriod) * Math.PI * 2;
       
@@ -450,7 +485,10 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
       meshRef.current.position.z = z;
       ringRef.current.position.x = x;
       ringRef.current.position.z = z;
-      meshRef.current.rotation.y += 0.01;
+      
+      // Saturn rotation on its own axis - both horizontal and vertical
+      meshRef.current.rotation.y += 0.012;
+      meshRef.current.rotation.x += 0.009; // Vertical rotation
       
       labelRef.current.position.x = x;
       labelRef.current.position.z = z;
@@ -461,8 +499,8 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
   // Create highly detailed Saturn texture
   const createSaturnTexture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = 256; // Reduced from 512 for performance
+    canvas.height = 256; // Reduced from 512 for performance
     const ctx = canvas.getContext('2d')!;
     
     // Base gradient
@@ -472,7 +510,7 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
     gradient.addColorStop(0.9, '#000000');
     gradient.addColorStop(1, '#000000');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 256, 256);
     
     // Detailed banded atmosphere
     const bands = [
@@ -531,18 +569,40 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
     return texture;
   };
 
-  const saturnTexture = createSaturnTexture();
+  const saturnTexture = useMemo(() => createSaturnTexture(), []);
 
   return (
     <group>
       <mesh
         ref={meshRef}
-        onClick={() => onClick(page)}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(page);
+        }}
+        onPointerOver={() => {
+          setHovered(true);
+          // Get screen coordinates of planet
+          const worldPosition = new THREE.Vector3();
+          meshRef.current?.getWorldPosition(worldPosition);
+          const vector = worldPosition.clone().project(camera);
+          const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+          
+          window.dispatchEvent(new CustomEvent('planet-hover', { 
+            detail: { 
+              isHovering: true, 
+              planetName: 'Saturn',
+              planetData: { x, y, size: planet.size * 50 }
+            } 
+          }));
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
         scale={hovered ? planet.size * 1.3 : planet.size}
       >
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           map={saturnTexture}
           emissive={planet.color}
@@ -553,7 +613,7 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
       </mesh>
       {/* Saturn's rings */}
       <mesh ref={ringRef} rotation={[-Math.PI / 2 + 0.1, 0, 0]}>
-        <ringGeometry args={[1.2, 2.0, 64]} />
+        <ringGeometry args={[1.2, 2.0, 32]} />
         <meshStandardMaterial
           color={planet.color}
           emissive={planet.color}
@@ -592,7 +652,7 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
       
       {/* Orbit path */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[distance - 0.1, distance + 0.1, 128]} />
+        <ringGeometry args={[distance - 0.1, distance + 0.1, 64]} />
         <meshBasicMaterial color={planet.color} opacity={0.15} transparent side={THREE.DoubleSide} />
       </mesh>
     </group>
@@ -602,7 +662,8 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
 function Sun({ onClick }: { onClick: () => void }) {
   const sunRef = useRef<THREE.Mesh>(null);
   const labelRef = useRef<THREE.Group>(null);
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(true); // Always show "home" label
+  const { camera } = useThree();
   
   useFrame(() => {
     if (sunRef.current) {
@@ -611,35 +672,145 @@ function Sun({ onClick }: { onClick: () => void }) {
     if (labelRef.current) {
       labelRef.current.position.y = 2.5;
     }
+    // Don't dispatch hover event - sun label is always visible, no need for UFO beam
   });
 
   // Create highly detailed sun texture
   const createSunTexture = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = 256; // Reduced from 512 for performance
+    canvas.height = 256; // Reduced from 512 for performance
     const ctx = canvas.getContext('2d')!;
     
-    // Base gradient with multiple color stops for realistic sun appearance
+    // Base gradient with many more color stops for ultra-realistic sun appearance
     const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-    gradient.addColorStop(0, '#FFFF00');
-    gradient.addColorStop(0.2, '#FFE44D');
-    gradient.addColorStop(0.4, '#FFD700');
-    gradient.addColorStop(0.6, '#FFA500');
-    gradient.addColorStop(0.8, '#FF8C00');
-    gradient.addColorStop(1, '#FF6600');
+    gradient.addColorStop(0, '#FFFFFF'); // Bright white core
+    gradient.addColorStop(0.05, '#FFFF80');
+    gradient.addColorStop(0.1, '#FFFF00'); // Yellow
+    gradient.addColorStop(0.15, '#FFE44D');
+    gradient.addColorStop(0.25, '#FFD700'); // Gold
+    gradient.addColorStop(0.35, '#FFC649');
+    gradient.addColorStop(0.45, '#FFA500'); // Orange
+    gradient.addColorStop(0.55, '#FF8C00');
+    gradient.addColorStop(0.65, '#FF7700');
+    gradient.addColorStop(0.75, '#FF6600');
+    gradient.addColorStop(0.85, '#FF5500');
+    gradient.addColorStop(0.95, '#FF4400');
+    gradient.addColorStop(1, '#CC3300'); // Dark red-orange edge
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 256, 256);
     
-    // Granular surface texture (solar granulation)
-    for (let i = 0; i < 300; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 512;
-      const r = Math.random() * 6 + 2;
-      const brightness = Math.random() * 0.3 + 0.7;
-      ctx.fillStyle = `rgba(255, ${220 + Math.random() * 35}, ${100 + Math.random() * 50}, ${brightness})`;
+    // Add radial brightness variations (not just solid gradient) - reduced
+    for (let ring = 0; ring < 8; ring++) {
+      const radius = (ring + 1) * 25;
+      const brightness = 0.3 + Math.sin(ring * 0.5) * 0.2;
+      ctx.strokeStyle = `rgba(255, ${200 + Math.random() * 55}, ${100 + Math.random() * 50}, ${brightness})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(128, 128, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    
+    // Optimized granular surface texture (solar granulation) - reduced for performance
+    for (let i = 0; i < 600; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const r = Math.random() * 10 + 0.5;
+      const brightness = Math.random() * 0.5 + 0.5;
+      const hueVariation = Math.random() * 60;
+      const saturation = 80 + Math.random() * 80;
+      
+      // Main granule
+      ctx.fillStyle = `rgba(255, ${180 + hueVariation}, ${saturation}, ${brightness})`;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Add smaller granules inside larger ones (nested detail)
+      if (r > 3) {
+        for (let j = 0; j < 2; j++) {
+          const offsetX = (Math.random() - 0.5) * r * 0.8;
+          const offsetY = (Math.random() - 0.5) * r * 0.8;
+          ctx.fillStyle = `rgba(255, ${200 + hueVariation}, ${saturation + 20}, ${brightness * 0.8})`;
+          ctx.beginPath();
+          ctx.arc(x + offsetX, y + offsetY, r * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      // Add tiny micro-granules
+      if (r > 5) {
+        for (let k = 0; k < 3; k++) {
+          const microX = x + (Math.random() - 0.5) * r;
+          const microY = y + (Math.random() - 0.5) * r;
+          ctx.fillStyle = `rgba(255, ${220 + hueVariation}, ${saturation + 40}, ${brightness * 0.6})`;
+          ctx.beginPath();
+          ctx.arc(microX, microY, r * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    
+    // Add bright hotspots (areas of intense activity) - reduced for performance
+    for (let i = 0; i < 25; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const r = Math.random() * 15 + 5;
+      const intensity = Math.random() * 0.4 + 0.6;
+      
+      ctx.fillStyle = `rgba(255, 255, ${200 + Math.random() * 55}, ${intensity})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Bright center
+      ctx.fillStyle = `rgba(255, 255, ${220 + Math.random() * 35}, ${intensity * 1.2})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Add sunspots for realism - reduced for performance
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const r = Math.random() * 18 + 6;
+      const darkness = Math.random() * 0.4 + 0.5;
+      
+      // Outer penumbra (lightest ring)
+      ctx.fillStyle = `rgba(${120 + Math.random() * 40}, ${60 + Math.random() * 30}, 0, ${darkness * 0.4})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Middle penumbra
+      ctx.fillStyle = `rgba(${100 + Math.random() * 50}, ${50 + Math.random() * 30}, 0, ${darkness * 0.6})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 1.4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner penumbra
+      ctx.fillStyle = `rgba(${80 + Math.random() * 40}, ${40 + Math.random() * 20}, 0, ${darkness * 0.8})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 1.1, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Umbra (darker center)
+      ctx.fillStyle = `rgba(${50 + Math.random() * 30}, ${25 + Math.random() * 15}, 0, ${darkness})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Darkest core
+      ctx.fillStyle = `rgba(${30 + Math.random() * 20}, ${15 + Math.random() * 10}, 0, ${darkness * 1.3})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Very dark center point
+      ctx.fillStyle = `rgba(${20 + Math.random() * 10}, ${10 + Math.random() * 5}, 0, ${darkness * 1.5})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.25, 0, Math.PI * 2);
       ctx.fill();
     }
     
@@ -670,37 +841,206 @@ function Sun({ onClick }: { onClick: () => void }) {
       ctx.fill();
     });
     
-    // Solar flares and prominences
+    // Solar flares and prominences - reduced for performance
     for (let i = 0; i < 20; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const distance = 200 + Math.random() * 50;
-      const x = 256 + Math.cos(angle) * distance;
-      const y = 256 + Math.sin(angle) * distance;
-      const length = Math.random() * 30 + 20;
+      const distance = 150 + Math.random() * 100;
+      const x = 128 + Math.cos(angle) * distance;
+      const y = 128 + Math.sin(angle) * distance;
       
-      ctx.strokeStyle = `rgba(255, ${150 + Math.random() * 50}, 0, 0.6)`;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(256, 256);
-      ctx.lineTo(x, y);
-      ctx.stroke();
+      // Multiple layers for depth (3 layers for performance)
+      for (let layer = 0; layer < 3; layer++) {
+        const layerDistance = distance - layer * 12;
+        const layerX = 128 + Math.cos(angle) * layerDistance;
+        const layerY = 128 + Math.sin(angle) * layerDistance;
+        const opacity = 0.9 - layer * 0.15;
+        const hue = 140 + layer * 15 + Math.random() * 40;
+        
+        ctx.strokeStyle = `rgba(255, ${hue}, ${40 + layer * 25}, ${opacity})`;
+        ctx.lineWidth = 5 - layer;
+        ctx.beginPath();
+        ctx.moveTo(256, 256);
+        ctx.lineTo(layerX, layerY);
+        ctx.stroke();
+      }
       
-      // Flare tip
-      ctx.fillStyle = `rgba(255, ${180 + Math.random() * 50}, 50, 0.8)`;
+      // Bright flare tip with multiple glow layers
+      for (let glow = 0; glow < 3; glow++) {
+        const glowSize = (Math.random() * 12 + 6) + glow * 5;
+        const glowOpacity = 0.9 - glow * 0.2;
+        ctx.fillStyle = `rgba(255, ${200 + Math.random() * 55}, ${80 + Math.random() * 40}, ${glowOpacity})`;
+        ctx.beginPath();
+        ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Outer glow halo
+      ctx.fillStyle = `rgba(255, ${180 + Math.random() * 50}, ${60 + Math.random() * 30}, 0.4)`;
       ctx.beginPath();
-      ctx.arc(x, y, Math.random() * 8 + 4, 0, Math.PI * 2);
+      ctx.arc(x, y, Math.random() * 20 + 15, 0, Math.PI * 2);
       ctx.fill();
     }
     
-    // Surface convection cells
-    for (let i = 0; i < 50; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 512;
-      const r = Math.random() * 25 + 15;
-      ctx.strokeStyle = `rgba(255, ${200 + Math.random() * 55}, ${100 + Math.random() * 50}, 0.4)`;
+    // Add coronal loops (curved magnetic field structures) - reduced
+    for (let i = 0; i < 20; i++) {
+      const startAngle = Math.random() * Math.PI * 2;
+      const endAngle = startAngle + (Math.random() - 0.5) * Math.PI;
+      const startRadius = 100 + Math.random() * 100;
+      const endRadius = 150 + Math.random() * 100;
+      const curve = (Math.random() - 0.5) * 0.8;
+      
+      ctx.strokeStyle = `rgba(255, ${180 + Math.random() * 50}, ${80 + Math.random() * 40}, 0.5)`;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
+      
+      for (let p = 0; p <= 30; p++) {
+        const progress = p / 30;
+        const angle = startAngle + (endAngle - startAngle) * progress + curve * Math.sin(progress * Math.PI);
+        const radius = startRadius + (endRadius - startRadius) * progress;
+        const px = 128 + Math.cos(angle) * radius;
+        const py = 128 + Math.sin(angle) * radius;
+        
+        if (p === 0) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+    }
+    
+    // Enhanced magnetic field lines - reduced for performance
+    for (let i = 0; i < 15; i++) {
+      const startAngle = Math.random() * Math.PI * 2;
+      const curve = (Math.random() - 0.5) * 0.8;
+      const points = 30;
+      
+      ctx.strokeStyle = `rgba(255, ${210 + Math.random() * 45}, ${90 + Math.random() * 60}, 0.4)`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
+      for (let p = 0; p < points; p++) {
+        const progress = p / points;
+        const angle = startAngle + curve * progress * Math.PI;
+        const radius = 40 + progress * 220;
+        const px = 128 + Math.cos(angle) * radius;
+        const py = 128 + Math.sin(angle) * radius;
+        
+        if (p === 0) {
+          ctx.moveTo(px, py);
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+    }
+    
+    // Add filament structures (dark threads) - reduced
+    for (let i = 0; i < 15; i++) {
+      const startX = Math.random() * 512;
+      const startY = Math.random() * 512;
+      const length = Math.random() * 80 + 40;
+      const angle = Math.random() * Math.PI * 2;
+      const endX = startX + Math.cos(angle) * length;
+      const endY = startY + Math.sin(angle) * length;
+      
+      ctx.strokeStyle = `rgba(${80 + Math.random() * 40}, ${40 + Math.random() * 20}, 0, 0.6)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    }
+    
+    // Surface convection cells - reduced for performance
+    for (let i = 0; i < 80; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const r = Math.random() * 35 + 8;
+      const hue = 180 + Math.random() * 75;
+      const saturation = 80 + Math.random() * 70;
+      
+      // Multiple concentric rings for depth
+      for (let ring = 0; ring < 4; ring++) {
+        const ringRadius = r * (1 - ring * 0.25);
+        const ringOpacity = 0.6 - ring * 0.15;
+        ctx.strokeStyle = `rgba(255, ${hue + ring * 10}, ${saturation + ring * 15}, ${ringOpacity})`;
+        ctx.lineWidth = 2.5 - ring * 0.5;
+        ctx.beginPath();
+        ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      
+      // Center highlight with gradient
+      const centerGradient = ctx.createRadialGradient(x, y, 0, x, y, r * 0.4);
+      centerGradient.addColorStop(0, `rgba(255, ${hue + 40}, ${saturation + 40}, 0.6)`);
+      centerGradient.addColorStop(1, `rgba(255, ${hue + 20}, ${saturation + 20}, 0.2)`);
+      ctx.fillStyle = centerGradient;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Enhanced surface ripples and waves - reduced
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const r = Math.random() * 25 + 3;
+      const waves = 4 + Math.floor(Math.random() * 4);
+      
+      for (let w = 0; w < waves; w++) {
+        const waveRadius = r + w * 6;
+        const waveOpacity = 0.4 - w * 0.08;
+        ctx.strokeStyle = `rgba(255, ${200 + Math.random() * 55}, ${100 + Math.random() * 50}, ${waveOpacity})`;
+        ctx.lineWidth = 1.5 - w * 0.2;
+        ctx.beginPath();
+        ctx.arc(x, y, waveRadius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+    
+    // Add turbulence patterns (chaotic flow) - reduced
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * 256;
+      const y = Math.random() * 256;
+      const size = Math.random() * 40 + 10;
+      
+      ctx.strokeStyle = `rgba(255, ${190 + Math.random() * 65}, ${90 + Math.random() * 60}, 0.3)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      
+      // Create turbulent path
+      let currentX = x;
+      let currentY = y;
+      ctx.moveTo(currentX, currentY);
+      
+      for (let step = 0; step < 15; step++) {
+        currentX += (Math.random() - 0.5) * size * 0.3;
+        currentY += (Math.random() - 0.5) * size * 0.3;
+        ctx.lineTo(currentX, currentY);
+      }
+      ctx.stroke();
+    }
+    
+    // Add bright plasma streams - reduced
+    for (let i = 0; i < 12; i++) {
+      const startX = 256 + (Math.random() - 0.5) * 100;
+      const startY = 256 + (Math.random() - 0.5) * 100;
+      const angle = Math.random() * Math.PI * 2;
+      const length = Math.random() * 150 + 50;
+      const endX = startX + Math.cos(angle) * length;
+      const endY = startY + Math.sin(angle) * length;
+      
+      const streamGradient = ctx.createLinearGradient(startX, startY, endX, endY);
+      streamGradient.addColorStop(0, `rgba(255, 255, ${200 + Math.random() * 55}, 0.8)`);
+      streamGradient.addColorStop(0.5, `rgba(255, ${220 + Math.random() * 35}, ${120 + Math.random() * 40}, 0.6)`);
+      streamGradient.addColorStop(1, `rgba(255, ${200 + Math.random() * 55}, ${100 + Math.random() * 50}, 0.3)`);
+      
+      ctx.strokeStyle = streamGradient;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
       ctx.stroke();
     }
     
@@ -708,27 +1048,37 @@ function Sun({ onClick }: { onClick: () => void }) {
     return texture;
   };
 
-  const sunTexture = createSunTexture();
+  // Memoize sun texture to prevent recreation on every render
+  const sunTexture = useMemo(() => createSunTexture(), []);
 
   return (
     <group>
       <mesh
         ref={sunRef}
-        onClick={onClick}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        scale={hovered ? 1.2 : 1}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        onPointerOver={() => {
+          setHovered(true);
+          // Don't dispatch hover event - sun label is always visible, no need for UFO beam
+        }}
+        onPointerOut={() => {
+          // Keep hovered true - always show "home" label
+          setHovered(true);
+        }}
+        scale={1.2} // Always use hovered scale
       >
-        <sphereGeometry args={[1.5, 64, 64]} />
+        <sphereGeometry args={[1.5, 32, 32]} />
         <meshStandardMaterial
           map={sunTexture}
           emissive="#FFD700"
-          emissiveIntensity={hovered ? 2 : 1.5}
+          emissiveIntensity={2} // Always use hovered intensity
           metalness={0.1}
           roughness={0.2}
         />
-        <pointLight intensity={hovered ? 4 : 3} distance={60} decay={2} />
-        <pointLight intensity={hovered ? 2 : 1.5} distance={80} decay={3} color="#FFA500" />
+        <pointLight intensity={4} distance={60} decay={2} /> {/* Always use hovered intensity */}
+        <pointLight intensity={2} distance={80} decay={3} color="#FFA500" /> {/* Always use hovered intensity */}
       </mesh>
       
       <group ref={labelRef}>
@@ -757,105 +1107,185 @@ function Sun({ onClick }: { onClick: () => void }) {
   );
 }
 
-// Asteroid Belt between Mars and Jupiter
-function Asteroid({ angle, radius, y, size, rotationSpeed }: { angle: number; radius: number; y: number; size: number; rotationSpeed: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const startTimeRef = useRef(Date.now());
-  
-  useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += rotationSpeed;
-      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      const currentAngle = angle + elapsedSeconds * 0.01;
-      meshRef.current.position.x = Math.cos(currentAngle) * radius;
-      meshRef.current.position.z = Math.sin(currentAngle) * radius;
-    }
-  });
-
-  return (
-    <mesh
-      ref={meshRef}
-      position={[Math.cos(angle) * radius, y, Math.sin(angle) * radius]}
-      scale={size}
-    >
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshStandardMaterial color="#8B7355" emissive="#8B7355" emissiveIntensity={0.1} />
-    </mesh>
-  );
-}
-
+// Asteroid Belt between Mars and Jupiter - optimized with single useFrame
 function AsteroidBelt() {
-  const count = 100;
-  const asteroids = Array.from({ length: count }, () => ({
-    angle: Math.random() * Math.PI * 2,
-    radius: 12.5 + (Math.random() - 0.5) * 1.5,
-    y: (Math.random() - 0.5) * 0.5,
-    size: Math.random() * 0.08 + 0.02,
-    rotationSpeed: Math.random() * 0.01 + 0.005,
-  }));
-
-  return (
-    <group>
-      {asteroids.map((asteroid, i) => (
-        <Asteroid key={i} {...asteroid} />
-      ))}
-    </group>
-  );
-}
-
-// Kuiper Belt beyond Neptune
-function KuiperObject({ angle, radius, y, size, rotationSpeed }: { angle: number; radius: number; y: number; size: number; rotationSpeed: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const startTimeRef = useRef(Date.now());
+  const groupRef = useRef<THREE.Group>(null);
+  const asteroidsRef = useRef<Array<{
+    mesh: THREE.Mesh;
+    angle: number;
+    radius: number;
+    y: number;
+    size: number;
+    rotationSpeed: number;
+    startTime: number;
+  }>>([]);
   
+  // Initialize asteroids once
+  useEffect(() => {
+    if (!groupRef.current) return;
+    
+    const count = 30; // Further reduced for performance
+    const material = new THREE.MeshStandardMaterial({ 
+      color: "#8B7355", 
+      emissive: "#8B7355", 
+      emissiveIntensity: 0.1 
+    });
+    
+    asteroidsRef.current = Array.from({ length: count }, () => {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 12.5 + (Math.random() - 0.5) * 1.5;
+      const y = (Math.random() - 0.5) * 0.5;
+      const size = Math.random() * 0.08 + 0.02;
+      
+      const geometry = new THREE.SphereGeometry(1, 6, 6);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(
+        Math.cos(angle) * radius,
+        y,
+        Math.sin(angle) * radius
+      );
+      mesh.scale.setScalar(size);
+      groupRef.current!.add(mesh);
+      
+      return {
+        mesh,
+        angle,
+        radius,
+        y,
+        size,
+        rotationSpeed: Math.random() * 0.01 + 0.005,
+        startTime: Date.now(),
+      };
+    });
+    
+    return () => {
+      asteroidsRef.current.forEach(({ mesh }) => {
+        mesh.geometry.dispose();
+        (mesh.material as THREE.Material).dispose();
+        groupRef.current?.remove(mesh);
+      });
+      asteroidsRef.current = [];
+    };
+  }, []);
+  
+  // Single useFrame for all asteroids
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += rotationSpeed;
-      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      const currentAngle = angle + elapsedSeconds * 0.003;
-      meshRef.current.position.x = Math.cos(currentAngle) * radius;
-      meshRef.current.position.z = Math.sin(currentAngle) * radius;
-    }
+    if (!asteroidsRef.current.length) return;
+    const now = Date.now();
+    
+    asteroidsRef.current.forEach((asteroid) => {
+      asteroid.mesh.rotation.y += asteroid.rotationSpeed;
+      const elapsedSeconds = (now - asteroid.startTime) / 1000;
+      const currentAngle = asteroid.angle + elapsedSeconds * 0.01;
+      asteroid.mesh.position.x = Math.cos(currentAngle) * asteroid.radius;
+      asteroid.mesh.position.z = Math.sin(currentAngle) * asteroid.radius;
+    });
   });
 
-  return (
-    <mesh
-      ref={meshRef}
-      position={[Math.cos(angle) * radius, y, Math.sin(angle) * radius]}
-      scale={size}
-    >
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshStandardMaterial color="#4A5568" emissive="#4A5568" emissiveIntensity={0.1} />
-    </mesh>
-  );
+  return <group ref={groupRef} />;
 }
 
+// Kuiper Belt beyond Neptune - optimized with single useFrame
 function KuiperBelt() {
-  const count = 80;
-  const kuiperObjects = Array.from({ length: count }, () => ({
-    angle: Math.random() * Math.PI * 2,
-    radius: 32 + (Math.random() - 0.5) * 3,
-    y: (Math.random() - 0.5) * 1,
-    size: Math.random() * 0.12 + 0.03,
-    rotationSpeed: Math.random() * 0.005 + 0.002,
-  }));
+  const groupRef = useRef<THREE.Group>(null);
+  const objectsRef = useRef<Array<{
+    mesh: THREE.Mesh;
+    angle: number;
+    radius: number;
+    y: number;
+    size: number;
+    rotationSpeed: number;
+    startTime: number;
+  }>>([]);
+  
+  // Initialize objects once
+  useEffect(() => {
+    if (!groupRef.current) return;
+    
+    const count = 25; // Further reduced for performance
+    const material = new THREE.MeshStandardMaterial({ 
+      color: "#4A5568", 
+      emissive: "#4A5568", 
+      emissiveIntensity: 0.1 
+    });
+    
+    objectsRef.current = Array.from({ length: count }, () => {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 32 + (Math.random() - 0.5) * 3;
+      const y = (Math.random() - 0.5) * 1;
+      const size = Math.random() * 0.12 + 0.03;
+      
+      const geometry = new THREE.SphereGeometry(1, 6, 6);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(
+        Math.cos(angle) * radius,
+        y,
+        Math.sin(angle) * radius
+      );
+      mesh.scale.setScalar(size);
+      groupRef.current!.add(mesh);
+      
+      return {
+        mesh,
+        angle,
+        radius,
+        y,
+        size,
+        rotationSpeed: Math.random() * 0.005 + 0.002,
+        startTime: Date.now(),
+      };
+    });
+    
+    return () => {
+      objectsRef.current.forEach(({ mesh }) => {
+        mesh.geometry.dispose();
+        (mesh.material as THREE.Material).dispose();
+        groupRef.current?.remove(mesh);
+      });
+      objectsRef.current = [];
+    };
+  }, []);
+  
+  // Single useFrame for all objects
+  useFrame(() => {
+    if (!objectsRef.current.length) return;
+    const now = Date.now();
+    
+    objectsRef.current.forEach((obj) => {
+      obj.mesh.rotation.y += obj.rotationSpeed;
+      const elapsedSeconds = (now - obj.startTime) / 1000;
+      const currentAngle = obj.angle + elapsedSeconds * 0.003;
+      obj.mesh.position.x = Math.cos(currentAngle) * obj.radius;
+      obj.mesh.position.z = Math.sin(currentAngle) * obj.radius;
+    });
+  });
 
-  return (
-    <group>
-      {kuiperObjects.map((obj, i) => (
-        <KuiperObject key={i} {...obj} />
-      ))}
-    </group>
-  );
+  return <group ref={groupRef} />;
 }
 
 export default function SolarSystem() {
   const handlePlanetClick = (page: string) => {
-    window.location.href = page;
+    // Show loading screen instantly BEFORE navigation
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('show-loading');
+      window.dispatchEvent(event);
+      // Small delay to ensure loading screen appears
+      setTimeout(() => {
+        window.location.href = page;
+      }, 10);
+    }
   };
 
   const handleSunClick = () => {
-    window.location.href = '/';
+    // Show loading screen instantly BEFORE navigation
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('show-loading');
+      window.dispatchEvent(event);
+      // Small delay to ensure loading screen appears
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 10);
+    }
   };
 
   return (
@@ -863,13 +1293,15 @@ export default function SolarSystem() {
       <Canvas
         camera={{ position: [0, 20, 35], fov: 60 }}
         gl={{ 
-          antialias: true, 
+          antialias: false, // Disable for performance
           alpha: true,
           powerPreference: "high-performance",
           stencil: false,
-          depth: true
+          depth: true,
+          precision: "mediump" // Lower precision for performance
         }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]} // Reduced max DPR
+        performance={{ min: 0.5 }} // Allow lower framerate
       >
         <ambientLight intensity={0.2} />
         <fog attach="fog" args={['#0a0a0f', 50, 100]} />
@@ -888,7 +1320,7 @@ export default function SolarSystem() {
         <Stars 
           radius={150} 
           depth={80} 
-          count={8000} 
+          count={2000} 
           factor={6} 
           fade 
           speed={0.5}
@@ -901,8 +1333,9 @@ export default function SolarSystem() {
           maxDistance={120}
           autoRotate={false}
           autoRotateSpeed={0.2}
-          dampingFactor={0.05}
+          dampingFactor={0.1} // Increased for better performance
           enableDamping={true}
+          makeDefault
         />
       </Canvas>
     </div>

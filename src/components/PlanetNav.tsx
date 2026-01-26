@@ -42,8 +42,10 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
         )}
         
         {/* Planet icon */}
-        <div
+        <motion.div
           className="relative rounded-full flex items-center justify-center transition-all duration-300 overflow-hidden cursor-pointer"
+          whileHover={{ scale: 1.3 }}
+          transition={{ duration: 0.1, ease: 'easeOut' }}
           style={{
             width: `${Math.max(20, (isActive ? item.size * 1.4 : item.size) * 20)}px`,
             height: `${Math.max(20, (isActive ? item.size * 1.4 : item.size) * 20)}px`,
@@ -231,31 +233,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
               background: `radial-gradient(circle at 30% 30%, rgba(255, 255, 255, ${isActive ? 0.5 : 0.25}), transparent 70%)`,
             }}
           />
-          {/* Special sun effect */}
-          {item.planet === 'Sun' && (
-            <>
-              <div
-                className="absolute inset-0 rounded-full animate-pulse"
-                style={{
-                  background: `radial-gradient(circle, rgba(255, 255, 255, 0.6), transparent 60%)`,
-                }}
-              />
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute rounded-full opacity-40"
-                  style={{
-                    width: '3px',
-                    height: '3px',
-                    backgroundColor: '#FF8C00',
-                    top: `${30 + Math.sin(i * Math.PI / 3) * 25}%`,
-                    left: `${50 + Math.cos(i * Math.PI / 3) * 25}%`,
-                  }}
-                />
-              ))}
-            </>
-          )}
-        </div>
+        </motion.div>
         
         {/* Connecting line segments */}
         {index < NAV_ITEMS.length - 1 && (

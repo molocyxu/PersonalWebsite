@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import LoadingScreen from '../components/LoadingScreen';
 
 export interface Props {
   title: string;
@@ -12,16 +13,69 @@ const { title } = Astro.props;
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Alex Zheng's Personal Website" />
+    <meta name="description" content="alex zheng's personal website" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <title>{title} | Alex Zheng</title>
+    <title>{title} | alex zheng</title>
   </head>
   <body>
+    <LoadingScreen client:load />
     <slot />
+    <script is:inline>
+      // Show loading screen immediately when page loads
+      (function() {
+        window.dispatchEvent(new CustomEvent('show-loading'));
+      })();
+      
+      // Intercept all link clicks to show loading instantly (before navigation)
+      // Use immediate execution to set up listener as early as possible
+      (function() {
+        function handleClick(e) {
+          var target = e.target;
+          var link = target.closest ? target.closest('a[href]') : null;
+          if (!link) {
+            // Fallback for older browsers
+            var parent = target;
+            while (parent && parent !== document) {
+              if (parent.tagName === 'A' && parent.href) {
+                link = parent;
+                break;
+              }
+              parent = parent.parentElement;
+            }
+          }
+          
+          if (link && link.href) {
+            var href = link.getAttribute('href');
+            var isExternal = href && !href.startsWith('/') && !href.startsWith(window.location.origin);
+            var isSpecial = href && (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#'));
+            
+            if (!isExternal && !isSpecial && href) {
+              // Same origin navigation - show loading instantly BEFORE navigation
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              
+              // Dispatch event synchronously for instant display
+              window.dispatchEvent(new CustomEvent('show-loading'));
+              
+              // Use requestAnimationFrame to ensure loading screen renders before navigation
+              requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                  window.location.href = href;
+                });
+              });
+            }
+          }
+        }
+        
+        // Add listener in capture phase to catch clicks early
+        document.addEventListener('click', handleClick, true);
+      })();
+    </script>
   </body>
 </html>

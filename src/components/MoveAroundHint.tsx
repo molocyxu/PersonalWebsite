@@ -13,7 +13,7 @@ export default function MoveAroundHint() {
         transition={{ duration: 2, repeat: Infinity }}
         className="text-white/60 text-xs font-normal lowercase tracking-wide"
       >
-        move around!
+        move & drag around!
       </motion.div>
     </motion.div>
   );

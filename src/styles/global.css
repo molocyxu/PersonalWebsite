@@ -16,6 +16,63 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  html {
+    transition: background-color 0.5s ease;
+  }
+
+  /* Light mode styles - global background changes */
+  body.light-mode,
+  html.light-mode {
+    background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 25%, #f0f4ff 50%, #ffffff 75%, #f0f4ff 100%) !important;
+    color: #1a1a1a !important;
+  }
+
+  body.light-mode .bg-space-dark,
+  html.light-mode .bg-space-dark {
+    background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 25%, #f0f4ff 50%, #ffffff 75%, #f0f4ff 100%) !important;
+  }
+
+  body.light-mode .text-white,
+  html.light-mode .text-white {
+    color: #1a1a1a !important;
+  }
+
+  body.light-mode .text-gray-300,
+  body.light-mode .text-gray-400,
+  html.light-mode .text-gray-300,
+  html.light-mode .text-gray-400 {
+    color: #4a4a4a !important;
+  }
+
+  body.light-mode .bg-black\/20,
+  html.light-mode .bg-black\/20 {
+    background: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  body.light-mode .border-white\/10,
+  body.light-mode .border-white\/20,
+  html.light-mode .border-white\/10,
+  html.light-mode .border-white\/20 {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Light mode scrollbar */
+  body.light-mode ::-webkit-scrollbar-track,
+  html.light-mode ::-webkit-scrollbar-track {
+    background: #f0f4ff;
+  }
+
+  body.light-mode ::-webkit-scrollbar-thumb,
+  html.light-mode ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  body.light-mode ::-webkit-scrollbar-thumb:hover,
+  html.light-mode ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
   }
   
   html {
@@ -53,6 +110,15 @@
 
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Custom scrollbar */

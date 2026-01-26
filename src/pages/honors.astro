@@ -1,14 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PlanetNav from '../components/PlanetNav';
+
+// Generate many stars for starfield
+const generateStarField = () => {
+  const stars = [];
+  for (let i = 0; i < 200; i++) {
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const size = Math.random() * 2 + 0.5;
+    const opacity = Math.random() * 0.5 + 0.3;
+    stars.push(`radial-gradient(${size}px ${size}px at ${x}% ${y}%, rgba(255, 255, 255, ${opacity}), transparent)`);
+  }
+  return stars.join(', ');
+};
+
+const planetColor = '#4FD0E7'; // Uranus
+const planetColorRgb = '79, 208, 231';
 ---
 
 <Layout title="honors">
-  <div class="min-h-screen relative overflow-hidden" style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 25%, #0a0a0f 50%, #1a1a2e 75%, #0a0a0f 100%);">
-    <!-- Space background with stars -->
-    <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(2px 2px at 20% 30%, rgba(79, 208, 231, 0.3), transparent), radial-gradient(2px 2px at 60% 70%, rgba(79, 208, 231, 0.2), transparent), radial-gradient(1px 1px at 50% 50%, rgba(79, 208, 231, 0.4), transparent); background-size: 200% 200%;"></div>
-    <!-- Uranus color accent -->
-    <div class="absolute inset-0 opacity-10" style="background: radial-gradient(ellipse at top, rgba(79, 208, 231, 0.3), transparent 50%);"></div>
+  <div class="min-h-screen relative overflow-hidden" style="background: #000000;">
+    <!-- Star background - many stars -->
+    <div class="absolute inset-0" style={`background-image: ${generateStarField()}; background-size: 100% 100%;`}></div>
+    <!-- Uranus color tint -->
+    <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
     <PlanetNav client:load />
     <div class="container mx-auto px-8 py-24 relative z-10">
       <div class="max-w-4xl mx-auto animate-fade-in">
