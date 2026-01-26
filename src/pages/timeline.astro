@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PlanetNav from '../components/PlanetNav';
+import MagicalHoverCard from '../components/MagicalHoverCard';
 
 // Generate timeline entries for testing scroll
 const timelineEntries = Array.from({ length: 15 }, (_, i) => ({
@@ -47,19 +48,29 @@ const planetColorRgb = '140, 120, 83';
         </div>
 
         <!-- Extended content for testing scroll -->
-        <div class="space-y-8">
+        <div class="space-y-8" id="cards">
           {timelineEntries.map((entry) => (
-            <div key={entry.id} class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border animate-fade-in" style={`border-color: rgba(140, 120, 83, 0.15); animation-delay: ${0.1 + entry.id * 0.05}s;`}>
-              <h2 class="text-xl font-medium mb-4 lowercase tracking-tight" style="color: #8C7853; text-shadow: 0 0 15px rgba(140, 120, 83, 0.4);">
-                timeline entry {entry.id}
-              </h2>
-              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
-              <div class="mt-4 text-xs text-gray-400" style="color: rgba(255, 255, 255, 0.5);">
-                {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            <MagicalHoverCard
+              key={entry.id}
+              glowColor="rgba(140, 120, 83, 0.2)"
+              glowRadius={900}
+              glowOpacity={0.7}
+              transitionDuration={0.25}
+              className={`animate-fade-in`}
+              client:load
+            >
+              <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border animate-fade-in" style={`border-color: rgba(140, 120, 83, 0.15); animation-delay: ${0.1 + entry.id * 0.05}s;`}>
+                <h2 class="text-xl font-medium mb-4 lowercase tracking-tight" style="color: #8C7853; text-shadow: 0 0 15px rgba(140, 120, 83, 0.4);">
+                  timeline entry {entry.id}
+                </h2>
+                <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <div class="mt-4 text-xs text-gray-400" style="color: rgba(255, 255, 255, 0.5);">
+                  {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </div>
               </div>
-            </div>
+            </MagicalHoverCard>
           ))}
         </div>
       </div>

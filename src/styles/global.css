@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Magical Hover Cards - Radial Glow Effect */
+.magical-hover-card {
+  position: relative;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --glow-color: rgba(255, 255, 255, 0.1);
+  --glow-radius: 800px;
+  --glow-opacity: 0.6;
+  --transition-duration: 0.3s;
+}
+
+.magical-hover-card::before,
+.magical-hover-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease-out;
+  z-index: 1;
+  will-change: opacity, background;
+}
+
+/* Larger, dimmer outer glow */
+.magical-hover-card::before {
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    var(--glow-color) 0%,
+    transparent 40%
+  );
+  filter: blur(40px);
+}
+
+/* Smaller, brighter inner glow */
+.magical-hover-card::after {
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    var(--glow-color) 0%,
+    transparent 30%
+  );
+  filter: blur(20px);
+  opacity: 0;
+}
+
+/* Show glow on hover */
+.magical-hover-card:hover::before {
+  opacity: calc(var(--glow-opacity) * 0.8);
+}
+
+.magical-hover-card:hover::after {
+  opacity: var(--glow-opacity);
+}
+
+/* Ensure content is above the glow layers */
+.magical-hover-card > * {
+  position: relative;
+  z-index: 2;
+}
+
 @layer base {
   * {
     /* Default subtle border color for components; keep it light to avoid overpowering the space theme */

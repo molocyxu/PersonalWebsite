@@ -27,55 +27,73 @@ const { title } = Astro.props;
     <slot />
     <script is:inline>
       // Show loading screen immediately when page loads
-      (function() {
+      if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('show-loading'));
-      })();
+      }
       
       // Intercept all link clicks to show loading instantly (before navigation)
-      // Use immediate execution to set up listener as early as possible
-      (function() {
+      // Use DOMContentLoaded to ensure document is ready
+      if (typeof document !== 'undefined') {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function() {
+            setupClickHandler();
+          });
+        } else {
+          setupClickHandler();
+        }
+      }
+      
+      function setupClickHandler() {
         function handleClick(e) {
-          var target = e.target;
-          var link = target.closest ? target.closest('a[href]') : null;
-          if (!link) {
-            // Fallback for older browsers
-            var parent = target;
-            while (parent && parent !== document) {
-              if (parent.tagName === 'A' && parent.href) {
-                link = parent;
-                break;
+          try {
+            var target = e.target;
+            var link = target.closest ? target.closest('a[href]') : null;
+            if (!link) {
+              // Fallback for older browsers
+              var parent = target;
+              while (parent && parent !== document) {
+                if (parent.tagName === 'A' && parent.href) {
+                  link = parent;
+                  break;
+                }
+                parent = parent.parentElement;
               }
-              parent = parent.parentElement;
             }
-          }
-          
-          if (link && link.href) {
-            var href = link.getAttribute('href');
-            var isExternal = href && !href.startsWith('/') && !href.startsWith(window.location.origin);
-            var isSpecial = href && (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#'));
             
-            if (!isExternal && !isSpecial && href) {
-              // Same origin navigation - show loading instantly BEFORE navigation
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
+            if (link && link.href) {
+              var href = link.getAttribute('href');
+              if (!href) return;
               
-              // Dispatch event synchronously for instant display
-              window.dispatchEvent(new CustomEvent('show-loading'));
+              var isExternal = !href.startsWith('/') && !href.startsWith(window.location.origin);
+              var isSpecial = href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#');
               
-              // Use requestAnimationFrame to ensure loading screen renders before navigation
-              requestAnimationFrame(function() {
-                requestAnimationFrame(function() {
-                  window.location.href = href;
-                });
-              });
+              if (!isExternal && !isSpecial) {
+                // Same origin navigation - show loading instantly BEFORE navigation
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Dispatch event synchronously for instant display
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('show-loading'));
+                  
+                  // Use requestAnimationFrame to ensure loading screen renders before navigation
+                  requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                      window.location.href = href;
+                    });
+                  });
+                }
+              }
             }
+          } catch (err) {
+            console.error('Error in click handler:', err);
           }
         }
         
         // Add listener in capture phase to catch clicks early
         document.addEventListener('click', handleClick, true);
-      })();
+      }
     </script>
   </body>
 </html>

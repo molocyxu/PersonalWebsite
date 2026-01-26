@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PlanetNav from '../components/PlanetNav';
+import MagicalHoverCard from '../components/MagicalHoverCard';
 
 // Generate many stars for starfield
 const generateStarField = () => {
@@ -34,10 +35,20 @@ const planetColorRgb = '250, 213, 165';
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(250, 213, 165, 0.6), transparent);"></div>
         </div>
-        <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(250, 213, 165, 0.15);">
-          <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-            This page will showcase my life. Content coming soon.
-          </p>
+        <div id="cards">
+          <MagicalHoverCard
+            glowColor="rgba(250, 213, 165, 0.25)"
+            glowRadius={850}
+            glowOpacity={0.75}
+            transitionDuration={0.25}
+            client:load
+          >
+            <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(250, 213, 165, 0.15);">
+              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
+                This page will showcase my life. Content coming soon.
+              </p>
+            </div>
+          </MagicalHoverCard>
         </div>
       </div>
     </div>

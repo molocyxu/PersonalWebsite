@@ -58,35 +58,81 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
             filter: `brightness(${isActive ? 1.2 : 0.8})`,
           }}
         >
-          {/* Special styling for Saturn - rings */}
+          {/* Special styling for Saturn - diagonal rings */}
           {item.planet === 'Saturn' && (
             <>
+              {/* Outer ring */}
               <div
-                className="absolute rounded-full border-2"
+                className="absolute"
                 style={{
-                  borderColor: item.color,
-                  borderWidth: '2px',
-                  width: '140%',
-                  height: '140%',
+                  width: '180%',
+                  height: '180%',
                   top: '50%',
                   left: '50%',
-                  transform: 'translate(-50%, -50%) rotate(15deg)',
-                  opacity: 0.7,
+                  transform: 'translate(-50%, -50%) rotate(25deg)',
+                  opacity: 0.8,
+                  border: `2px solid ${item.color}`,
                   borderRadius: '50%',
+                  clipPath: 'ellipse(50% 30% at 50% 50%)',
                 }}
               />
+              {/* Middle ring */}
               <div
-                className="absolute rounded-full border-2"
+                className="absolute"
                 style={{
-                  borderColor: item.color,
-                  borderWidth: '1px',
                   width: '160%',
                   height: '160%',
                   top: '50%',
                   left: '50%',
-                  transform: 'translate(-50%, -50%) rotate(-15deg)',
-                  opacity: 0.5,
+                  transform: 'translate(-50%, -50%) rotate(25deg)',
+                  opacity: 0.7,
+                  border: `1.5px solid ${item.color}`,
                   borderRadius: '50%',
+                  clipPath: 'ellipse(50% 25% at 50% 50%)',
+                }}
+              />
+              {/* Inner ring */}
+              <div
+                className="absolute"
+                style={{
+                  width: '140%',
+                  height: '140%',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%) rotate(25deg)',
+                  opacity: 0.6,
+                  border: `1px solid ${item.color}`,
+                  borderRadius: '50%',
+                  clipPath: 'ellipse(50% 20% at 50% 50%)',
+                }}
+              />
+              {/* Secondary diagonal ring set */}
+              <div
+                className="absolute"
+                style={{
+                  width: '180%',
+                  height: '180%',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%) rotate(-25deg)',
+                  opacity: 0.6,
+                  border: `1.5px solid ${item.color}`,
+                  borderRadius: '50%',
+                  clipPath: 'ellipse(50% 30% at 50% 50%)',
+                }}
+              />
+              <div
+                className="absolute"
+                style={{
+                  width: '160%',
+                  height: '160%',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%) rotate(-25deg)',
+                  opacity: 0.5,
+                  border: `1px solid ${item.color}`,
+                  borderRadius: '50%',
+                  clipPath: 'ellipse(50% 25% at 50% 50%)',
                 }}
               />
             </>
