@@ -62,6 +62,74 @@
   z-index: 2;
 }
 
+/* Magical Text Effect - Gradient Animated Text with Sparkling Stars */
+.magical-text-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.magic-text {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--darker-rgb), 1) 0%,
+    rgba(var(--lighter-rgb), 1) 25%,
+    rgba(var(--planet-rgb), 1) 50%,
+    rgba(var(--lighter-rgb), 1) 75%,
+    rgba(var(--darker-rgb), 1) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: background-pan 3s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes background-pan {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.magic-star {
+  position: absolute;
+  left: var(--star-left, 50%);
+  top: var(--star-top, 50%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  color: rgba(var(--planet-rgb), 1);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.magic-star-svg {
+  width: 16px;
+  height: 16px;
+  filter: drop-shadow(0 0 4px rgb(var(--planet-rgb)));
+  animation: star-sparkle 1s ease-out forwards;
+}
+
+@keyframes star-sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) rotate(360deg);
+  }
+}
+
 @layer base {
   * {
     /* Default subtle border color for components; keep it light to avoid overpowering the space theme */

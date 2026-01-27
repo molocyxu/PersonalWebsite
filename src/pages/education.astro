@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import PlanetNav from '../components/PlanetNav';
 import MagicalHoverCard from '../components/MagicalHoverCard';
+import MagicalText from '../components/MagicalText';
 
 // Generate many stars for starfield
 const generateStarField = () => {
@@ -30,8 +31,8 @@ const planetColorRgb = '107, 147, 214';
     <div class="container mx-auto px-8 py-24 relative z-10">
       <div class="max-w-4xl mx-auto animate-fade-in">
         <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(107, 147, 214, 0.4);">
-          <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight" style="color: #6B93D6; text-shadow: 0 0 20px rgba(107, 147, 214, 0.5);">
-            education
+          <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
+            <MagicalText text="education" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(107, 147, 214, 0.6), transparent);"></div>
         </div>
