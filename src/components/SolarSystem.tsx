@@ -12,7 +12,7 @@ const PLANETS = [
     distance: 5, 
     period: 87.97,
     initialAngle: 0,
-    page: '/timeline',
+    page: '/gallery',
     pageName: 'gallery'
   },
   { 
@@ -22,7 +22,7 @@ const PLANETS = [
     distance: 7, 
     period: 224.7,
     initialAngle: Math.PI / 3,
-    page: '/projects',
+    page: '/timeline',
     pageName: 'timeline'
   },
   { 
@@ -32,7 +32,7 @@ const PLANETS = [
     distance: 9, 
     period: 365.25,
     initialAngle: Math.PI / 2,
-    page: '/education',
+    page: '/projects',
     pageName: 'projects'
   },
   { 
@@ -52,7 +52,7 @@ const PLANETS = [
     distance: 15, 
     period: 4332.59,
     initialAngle: Math.PI / 6,
-    page: '/personal',
+    page: '/placeholder',
     pageName: 'placeholder'
   },
   { 
@@ -62,7 +62,7 @@ const PLANETS = [
     distance: 19, 
     period: 10759.22,
     initialAngle: Math.PI / 5,
-    page: '/resume',
+    page: '/experience',
     pageName: 'experience'
   },
   { 
@@ -454,6 +454,10 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       {/* Orbit path */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(page);
+        }}
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
@@ -680,6 +684,10 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
       {/* Orbit path */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(page);
+        }}
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
@@ -1248,7 +1256,7 @@ function AsteroidBelt() {
         onPointerOut={() => setHovered(false)}
         onClick={() => {
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/skills-experience' } }));
+            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/education' } }));
           }
         }}
       >
@@ -1365,7 +1373,7 @@ function KuiperBelt() {
         onPointerOut={() => setHovered(false)}
         onClick={() => {
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/socials' } }));
+            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/skills' } }));
           }
         }}
       >
@@ -1419,7 +1427,7 @@ function Satellite() {
       onPointerOut={() => setHovered(false)}
       onClick={() => {
         if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/contact' } }));
+          window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/contacts' } }));
         }
       }}
     >

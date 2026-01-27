@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MagicalHoverCard from '../components/MagicalHoverCard';
+import MagicalText from '../components/MagicalText';
+
+// Generate timeline entries for testing scroll
+const timelineEntries = Array.from({ length: 15 }, (_, i) => ({
+  id: i + 1,
+  date: new Date(2020 + i, i % 12, (i * 7) % 28 + 1),
+}));
+
+const planetColor = '#8C7853'; // Mercury
+const planetColorRgb = '140, 120, 83';
+---
+
+<Layout title="gallery">
+  <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
+    <!-- Star background -->
+    <div class="absolute inset-0 page-starfield"></div>
+    <!-- Mercury color tint -->
+    <div class="absolute inset-0 opacity-20 z-10" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.18), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
+    <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
+      <div class="max-w-6xl animate-fade-in">
+        <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(140, 120, 83, 0.4);">
+          <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
+            <MagicalText text="gallery" color={planetColor} colorRgb={planetColorRgb} client:load />
+          </h1>
+          <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(140, 120, 83, 0.6), transparent);"></div>
+        </div>
+        <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border mb-8" style="border-color: rgba(140, 120, 83, 0.15);">
+          <p class="text-sm text-gray-300 font-light leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.7);">
+            This page will showcase my gallery. Content coming soon.
+          </p>
+        </div>
+
+        <!-- Extended content for testing scroll -->
+        <div class="space-y-8" id="cards">
+          {timelineEntries.map((entry) => (
+            <MagicalHoverCard
+              key={entry.id}
+              glowColor="rgba(140, 120, 83, 0.2)"
+              glowRadius={900}
+              glowOpacity={0.7}
+              transitionDuration={0.25}
+              className={`animate-fade-in`}
+              client:load
+            >
+              <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border animate-fade-in" style={`border-color: rgba(140, 120, 83, 0.15); animation-delay: ${0.1 + entry.id * 0.05}s;`}>
+                <h2 class="text-xl font-medium mb-4 lowercase tracking-tight" style="color: #8C7853; text-shadow: 0 0 15px rgba(140, 120, 83, 0.4);">
+                  timeline entry {entry.id}
+                </h2>
+                <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <div class="mt-4 text-xs text-gray-400" style="color: rgba(255, 255, 255, 0.5);">
+                  {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </div>
+              </div>
+            </MagicalHoverCard>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+  }
+</style>

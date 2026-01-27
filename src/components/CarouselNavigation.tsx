@@ -2,18 +2,19 @@ import { useEffect, useState, useCallback } from 'react';
 
 const PAGES = [
   { path: '/', name: 'home' },
+  { path: '/gallery', name: 'gallery' },
   { path: '/timeline', name: 'timeline' },
   { path: '/projects', name: 'projects' },
-  { path: '/education', name: 'education' },
-  { path: '/skills-experience', name: 'skills & experience' },
   { path: '/research', name: 'research' },
-  { path: '/life', name: 'life' },
+  { path: '/education', name: 'education' },
+  { path: '/experience', name: 'experience' },
+  { path: '/placeholder', name: 'placeholder' },
   { path: '/honors', name: 'honors' },
-  { path: '/contact', name: 'contact' },
-  { path: '/resume', name: 'resume' },
-  { path: '/socials', name: 'socials' },
-  { path: '/personal', name: 'personal' },
+  { path: '/life', name: 'life' },
+  { path: '/skills', name: 'skills' },
+  { path: '/contacts', name: 'contacts' },
 ];
+
 
 export default function CarouselNavigation() {
   const [currentPath, setCurrentPath] = useState('/');

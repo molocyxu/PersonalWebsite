@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 
 const NAV_ITEMS = [
   { name: 'home', path: '/', planet: 'Sun', color: '#FFD700', size: 1.0 },
-  { name: 'gallery', path: '/timeline', planet: 'Mercury', color: '#8C7853', size: 0.4 },
-  { name: 'timeline', path: '/projects', planet: 'Venus', color: '#FFC649', size: 0.6 },
-  { name: 'projects', path: '/education', planet: 'Earth', color: '#6B93D6', size: 0.65 },
+  { name: 'gallery', path: '/gallery', planet: 'Mercury', color: '#8C7853', size: 0.4 },
+  { name: 'timeline', path: '/timeline', planet: 'Venus', color: '#FFC649', size: 0.6 },
+  { name: 'projects', path: '/projects', planet: 'Earth', color: '#6B93D6', size: 0.65 },
   { name: 'research', path: '/research', planet: 'Mars', color: '#C1440E', size: 0.5 },
-  { name: 'education', path: '/skills-experience', planet: 'asteroid belt', color: '#A0988A', size: 0.45 },
-  { name: 'experience', path: '/resume', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
-  { name: 'placeholder', path: '/personal', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
+  { name: 'education', path: '/education', planet: 'asteroid belt', color: '#A0988A', size: 0.45 },
+  { name: 'placeholder', path: '/placeholder', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
+  { name: 'experience', path: '/experience', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
   { name: 'honors', path: '/honors', planet: 'Uranus', color: '#4FD0E7', size: 0.8 },
   { name: 'life', path: '/life', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
-  { name: 'skills', path: '/socials', planet: 'kuiper belt', color: '#7AA6D6', size: 0.45 },
-  { name: 'contacts', path: '/contact', planet: 'satellite', color: '#C0C7D6', size: 0.45 },
+  { name: 'skills', path: '/skills', planet: 'kuiper belt', color: '#7AA6D6', size: 0.45 },
+  { name: 'contacts', path: '/contacts', planet: 'satellite', color: '#C0C7D6', size: 0.45 },
 ];
 
 function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEMS[0]; index: number; isActive: boolean; scale: number }) {

@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 
 const NAV_ITEMS = [
   { name: 'Home', path: '/', planet: 'Earth' },
-  { name: 'Projects', path: '/projects', planet: 'Mercury' },
-  { name: 'Timeline', path: '/timeline', planet: 'Venus' },
-  { name: 'Socials', path: '/socials', planet: 'Mars' },
-  { name: 'Resume', path: '/resume', planet: 'Jupiter' },
-  { name: 'Personal', path: '/personal', planet: 'Saturn' },
+  { name: 'Projects', path: '/timeline', planet: 'Mercury' },
+  { name: 'Timeline', path: '/gallery', planet: 'Venus' },
+  { name: 'Socials', path: '/skills', planet: 'Mars' },
+  { name: 'Resume', path: '/experience', planet: 'Jupiter' },
+  { name: 'Personal', path: '/placeholder', planet: 'Saturn' },
 ];
 
 export default function Navigation() {

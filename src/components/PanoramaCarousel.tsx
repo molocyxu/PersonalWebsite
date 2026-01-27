@@ -2,32 +2,32 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const PAGES = [
   { path: '/', name: 'home' },
-  { path: '/timeline', name: 'gallery' },
-  { path: '/projects', name: 'timeline' },
-  { path: '/education', name: 'projects' },
+  { path: '/gallery', name: 'gallery' },
+  { path: '/timeline', name: 'timeline' },
+  { path: '/projects', name: 'projects' },
   { path: '/research', name: 'research' },
-  { path: '/skills-experience', name: 'education' },
-  { path: '/resume', name: 'experience' },
-  { path: '/personal', name: 'placeholder' },
+  { path: '/education', name: 'education' },
+  { path: '/experience', name: 'experience' },
+  { path: '/placeholder', name: 'placeholder' },
   { path: '/honors', name: 'honors' },
   { path: '/life', name: 'life' },
-  { path: '/socials', name: 'skills' },
-  { path: '/contact', name: 'contacts' },
+  { path: '/skills', name: 'skills' },
+  { path: '/contacts', name: 'contacts' },
 ];
 
 const SLIDE_MS = 800;
 const STAR_VARIANT_MAP: Record<string, number> = {
-  '/timeline': 0,
-  '/projects': 1,
-  '/education': 2,
+  '/gallery': 0,
+  '/timeline': 1,
+  '/projects': 2,
   '/research': 0,
-  '/skills-experience': 1,
-  '/resume': 2,
-  '/personal': 0,
+  '/education': 1,
+  '/experience': 2,
+  '/placeholder': 0,
   '/honors': 1,
   '/life': 2,
-  '/socials': 0,
-  '/contact': 1,
+  '/skills': 0,
+  '/contacts': 1,
 };
 
 export default function PanoramaCarousel() {

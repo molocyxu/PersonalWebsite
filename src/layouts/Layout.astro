@@ -24,9 +24,9 @@ const { title } = Astro.props;
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <!-- Resource hints for faster navigation -->
+    <link rel="prefetch" href="/gallery" />
     <link rel="prefetch" href="/timeline" />
-    <link rel="prefetch" href="/projects" />
-    <link rel="prefetch" href="/contact" />
+    <link rel="prefetch" href="/contacts" />
     <!-- Performance optimization: defer non-critical scripts -->
     <title>{title} | alex zheng</title>
   </head>
@@ -47,30 +47,30 @@ const { title } = Astro.props;
         var STAR_SEED = 101; // deterministic seed base
         var PAGES = [
           '/',
+          '/gallery',
           '/timeline',
           '/projects',
-          '/education',
-          '/skills-experience',
           '/research',
-          '/life',
+          '/education',
+          '/experience',
+          '/placeholder',
           '/honors',
-          '/contact',
-          '/resume',
-          '/socials',
-          '/personal'
+          '/life',
+          '/skills',
+          '/contacts'
         ];
         var STAR_VARIANTS = {
-          '/timeline': 0,
-          '/projects': 1,
-          '/education': 2,
-          '/skills-experience': 0,
+          '/gallery': 0,
+          '/timeline': 1,
+          '/projects': 2,
+          '/education': 0,
           '/research': 1,
           '/life': 2,
           '/honors': 0,
-          '/contact': 1,
-          '/resume': 2,
-          '/socials': 0,
-          '/personal': 1
+          '/contacts': 1,
+          '/experience': 2,
+          '/skills': 0,
+          '/placeholder': 1
         };
 
         function seededRandom(seed) {
