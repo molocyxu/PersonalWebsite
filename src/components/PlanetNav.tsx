@@ -3,33 +3,32 @@ import { useEffect, useState } from 'react';
 
 const NAV_ITEMS = [
   { name: 'home', path: '/', planet: 'Sun', color: '#FFD700', size: 1.0 },
-  { name: 'timeline', path: '/timeline', planet: 'Mercury', color: '#8C7853', size: 0.4 },
-  { name: 'projects', path: '/projects', planet: 'Venus', color: '#FFC649', size: 0.6 },
-  { name: 'education', path: '/education', planet: 'Earth', color: '#6B93D6', size: 0.65 },
-  { name: 'skills & experience', path: '/skills-experience', planet: 'Mars', color: '#C1440E', size: 0.5 },
-  { name: 'research', path: '/research', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
-  { name: 'life', path: '/life', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
+  { name: 'gallery', path: '/timeline', planet: 'Mercury', color: '#8C7853', size: 0.4 },
+  { name: 'timeline', path: '/projects', planet: 'Venus', color: '#FFC649', size: 0.6 },
+  { name: 'projects', path: '/education', planet: 'Earth', color: '#6B93D6', size: 0.65 },
+  { name: 'research', path: '/research', planet: 'Mars', color: '#C1440E', size: 0.5 },
+  { name: 'education', path: '/skills-experience', planet: 'asteroid belt', color: '#A0988A', size: 0.45 },
+  { name: 'experience', path: '/resume', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
+  { name: 'placeholder', path: '/personal', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
   { name: 'honors', path: '/honors', planet: 'Uranus', color: '#4FD0E7', size: 0.8 },
-  { name: 'contact', path: '/contact', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
+  { name: 'life', path: '/life', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
+  { name: 'skills', path: '/socials', planet: 'kuiper belt', color: '#7AA6D6', size: 0.45 },
+  { name: 'contacts', path: '/contact', planet: 'satellite', color: '#C0C7D6', size: 0.45 },
 ];
 
 function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEMS[0]; index: number; isActive: boolean; scale: number }) {
   const [isHovered, setIsHovered] = useState(false);
-  
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.dispatchEvent(new CustomEvent('carousel-navigate', { 
-      detail: { path: item.path } 
-    }));
-  };
 
   return (
     <motion.a
       href={item.path}
-      onClick={handleClick}
       className="relative pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={(event) => {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('panorama-navigate', { detail: { path: item.path } }));
+      }}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -51,7 +50,9 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
         
         {/* Planet icon */}
         <motion.div
-          className="relative rounded-full flex items-center justify-center transition-all duration-300 overflow-hidden cursor-pointer"
+          className={`relative rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
+            ['Saturn', 'asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet) ? 'overflow-visible' : 'overflow-hidden'
+          }`}
           whileHover={{ scale: 1.3 }}
           transition={{ duration: 0.1, ease: 'easeOut' }}
           style={{
@@ -59,11 +60,15 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
             height: `${Math.max(20, (isActive ? item.size * 1.4 : item.size) * 20)}px`,
             minWidth: '20px',
             minHeight: '20px',
-            backgroundColor: item.color,
-            boxShadow: isActive
-              ? `0 0 20px ${item.color}, 0 0 40px ${item.color}40, inset 0 0 20px ${item.color}80`
-              : `0 0 10px ${item.color}40`,
-            filter: `brightness(${isActive ? 1.2 : 0.8})`,
+            backgroundColor: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet) ? 'transparent' : item.color,
+            boxShadow: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet)
+              ? 'none'
+              : isActive
+                ? `0 0 20px ${item.color}, 0 0 40px ${item.color}40, inset 0 0 20px ${item.color}80`
+                : `0 0 10px ${item.color}40`,
+            filter: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet)
+              ? 'none'
+              : `brightness(${isActive ? 1.2 : 0.8})`,
           }}
         >
           {/* Special styling for Saturn - diagonal rings */}
@@ -78,7 +83,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%) rotate(25deg)',
-                  opacity: 0.8,
+                  opacity: isHovered ? 0.95 : 0.8,
                   border: `2px solid ${item.color}`,
                   borderRadius: '50%',
                   clipPath: 'ellipse(50% 30% at 50% 50%)',
@@ -93,7 +98,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%) rotate(25deg)',
-                  opacity: 0.7,
+                  opacity: isHovered ? 0.9 : 0.7,
                   border: `1.5px solid ${item.color}`,
                   borderRadius: '50%',
                   clipPath: 'ellipse(50% 25% at 50% 50%)',
@@ -108,7 +113,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%) rotate(25deg)',
-                  opacity: 0.6,
+                  opacity: isHovered ? 0.85 : 0.6,
                   border: `1px solid ${item.color}`,
                   borderRadius: '50%',
                   clipPath: 'ellipse(50% 20% at 50% 50%)',
@@ -123,7 +128,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%) rotate(-25deg)',
-                  opacity: 0.6,
+                  opacity: isHovered ? 0.85 : 0.6,
                   border: `1.5px solid ${item.color}`,
                   borderRadius: '50%',
                   clipPath: 'ellipse(50% 30% at 50% 50%)',
@@ -137,10 +142,126 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%) rotate(-25deg)',
-                  opacity: 0.5,
+                  opacity: isHovered ? 0.8 : 0.5,
                   border: `1px solid ${item.color}`,
                   borderRadius: '50%',
                   clipPath: 'ellipse(50% 25% at 50% 50%)',
+                }}
+              />
+            </>
+          )}
+          
+          {/* Asteroid belt icon - tilted ring of small asteroids */}
+          {item.planet === 'asteroid belt' && (
+            <>
+              {[...Array(14)].map((_, i) => (
+                <div
+                  key={`asteroid-${i}`}
+                  className="absolute rounded-full"
+                  style={{
+                    width: '3px',
+                    height: '3px',
+                    backgroundColor: '#B99B6B',
+                    top: `${50 + Math.sin((i / 14) * Math.PI * 2) * 35}%`,
+                    left: `${50 + Math.cos((i / 14) * Math.PI * 2) * 45}%`,
+                    transform: 'translate(-50%, -50%) rotate(20deg)',
+                    opacity: isHovered ? 0.95 : 0.7,
+                    boxShadow: isHovered ? '0 0 6px rgba(185, 155, 107, 0.8)' : 'none',
+                  }}
+                />
+              ))}
+              <div
+                className="absolute"
+                style={{
+                  width: '140%',
+                  height: '60%',
+                  border: '1px solid rgba(185, 155, 107, 0.6)',
+                  borderRadius: '50%',
+                  transform: 'translate(-50%, -50%) rotate(20deg)',
+                  top: '50%',
+                  left: '50%',
+                  opacity: isHovered ? 0.8 : 0.4,
+                }}
+              />
+            </>
+          )}
+          
+          {/* Kuiper belt icon - tilted ring of comets */}
+          {item.planet === 'kuiper belt' && (
+            <>
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={`comet-${i}`}
+                  className="absolute"
+                  style={{
+                    width: '7px',
+                    height: '2px',
+                    background: 'linear-gradient(to right, rgba(188, 217, 255, 0.9), rgba(188, 217, 255, 0.2))',
+                    top: `${50 + Math.sin((i / 12) * Math.PI * 2) * 35}%`,
+                    left: `${50 + Math.cos((i / 12) * Math.PI * 2) * 45}%`,
+                    transform: `translate(-50%, -50%) rotate(${i * 30 + 20}deg)`,
+                    opacity: isHovered ? 0.95 : 0.7,
+                    boxShadow: isHovered ? '0 0 6px rgba(141, 185, 255, 0.8)' : 'none',
+                  }}
+                />
+              ))}
+              <div
+                className="absolute"
+                style={{
+                  width: '140%',
+                  height: '60%',
+                  border: '1px solid rgba(141, 185, 255, 0.6)',
+                  borderRadius: '50%',
+                  transform: 'translate(-50%, -50%) rotate(20deg)',
+                  top: '50%',
+                  left: '50%',
+                  opacity: isHovered ? 0.8 : 0.4,
+                }}
+              />
+            </>
+          )}
+          
+          {/* Satellite icon */}
+          {item.planet === 'satellite' && (
+            <>
+              <div
+                className="absolute rounded-sm"
+                style={{
+                  width: '12px',
+                  height: '5px',
+                  backgroundColor: '#C0C7D6',
+                  opacity: isHovered ? 0.98 : 0.85,
+                  boxShadow: isHovered ? '0 0 6px rgba(227, 235, 247, 0.8)' : 'none',
+                }}
+              />
+              <div
+                className="absolute rounded-sm"
+                style={{
+                  width: '3px',
+                  height: '8px',
+                  backgroundColor: '#9AA5B1',
+                  transform: 'translateY(-3px)',
+                  opacity: isHovered ? 0.98 : 0.85,
+                }}
+              />
+              <div
+                className="absolute rounded-sm"
+                style={{
+                  width: '16px',
+                  height: '2px',
+                  backgroundColor: '#7FA8FF',
+                  transform: 'translateX(13px)',
+                  opacity: isHovered ? 0.98 : 0.85,
+                }}
+              />
+              <div
+                className="absolute rounded-sm"
+                style={{
+                  width: '16px',
+                  height: '2px',
+                  backgroundColor: '#7FA8FF',
+                  transform: 'translateX(-13px)',
+                  opacity: isHovered ? 0.98 : 0.85,
                 }}
               />
             </>
@@ -281,12 +402,14 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
           )}
           
           {/* Glow/highlight effect */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: `radial-gradient(circle at 30% 30%, rgba(255, 255, 255, ${isActive ? 0.5 : 0.25}), transparent 70%)`,
-            }}
-          />
+          {!['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet) && (
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `radial-gradient(circle at 30% 30%, rgba(255, 255, 255, ${isActive ? 0.5 : 0.25}), transparent 70%)`,
+              }}
+            />
+          )}
         </motion.div>
         
         {/* Connecting line segments */}
@@ -301,7 +424,7 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
         
         {/* Hover label - appears when planet icon is hovered */}
         <motion.div
-          className="absolute top-full mt-2 text-base font-normal whitespace-nowrap pointer-events-none lowercase z-50"
+          className="absolute top-full mt-2 text-base font-normal whitespace-nowrap pointer-events-none lowercase z-[60]"
           initial={{ opacity: 0, y: -2 }}
           animate={{ 
             opacity: isHovered ? 1 : 0,
@@ -331,8 +454,13 @@ export default function PlanetNav() {
     setCurrentPath(window.location.pathname);
     // Listen for navigation changes
     const handlePopState = () => setCurrentPath(window.location.pathname);
+    const handlePanoramaChange = () => setCurrentPath(window.location.pathname);
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('panorama-path-change', handlePanoramaChange as EventListener);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('panorama-path-change', handlePanoramaChange as EventListener);
+    };
   }, []);
 
   return (

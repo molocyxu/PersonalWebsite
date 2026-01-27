@@ -1,8 +1,7 @@
 ---
 import '../styles/global.css';
-import LoadingScreen from '../components/LoadingScreen';
-import PersistentStarBackground from '../components/PersistentStarBackground';
-import ThreePaneCarousel from '../components/ThreePaneCarousel';
+import PanoramaCarousel from '../components/PanoramaCarousel';
+import PlanetNav from '../components/PlanetNav';
 
 export interface Props {
   title: string;
@@ -29,109 +28,114 @@ const { title } = Astro.props;
     <link rel="prefetch" href="/projects" />
     <link rel="prefetch" href="/contact" />
     <!-- Performance optimization: defer non-critical scripts -->
-    <script>
-      // Show loading screen immediately - no waiting
-      (function() {
-        if (typeof document !== 'undefined') {
-          var loadingEl = document.getElementById('loading-screen');
-          if (!loadingEl) {
-            // Create loading screen element if it doesn't exist yet
-            var el = document.createElement('div');
-            el.id = 'loading-screen';
-            el.style.cssText = 'position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:transparent;opacity:1;visibility:visible;';
-            el.innerHTML = '<div style="font-family:\'Inter\',sans-serif;color:rgba(255,255,255,0.9);text-shadow:0 0 20px rgba(255,255,255,0.5);letter-spacing:2px;">stars aligning...</div>';
-            document.body.appendChild(el);
-          } else {
-            loadingEl.style.display = 'flex';
-            loadingEl.style.opacity = '1';
-            loadingEl.style.visibility = 'visible';
-          }
-        }
-      })();
-    </script>
     <title>{title} | alex zheng</title>
   </head>
   <body style="overflow-x: hidden; position: relative;">
-    <PersistentStarBackground client:load />
-    <LoadingScreen client:load />
-    <ThreePaneCarousel client:only="react" />
-    <slot />
+    <div id="panorama-bg" aria-hidden="true"></div>
+    <PlanetNav client:load />
+    <PanoramaCarousel client:only="react" />
+    <div id="page-slot" style="display:none;">
+      <div id="page-content-root">
+        <slot />
+      </div>
+    </div>
     <script is:inline>
-      // Ensure loading screen is instantly visible - pre-render it
       (function() {
-        if (typeof document !== 'undefined') {
-          // Reset page-loaded state
-          document.body.classList.remove('page-loaded');
-          document.documentElement.classList.remove('page-loaded');
-          
-          // Show loading screen INSTANTLY - no delays
-          var loadingEl = document.getElementById('loading-screen');
-          if (loadingEl) {
-            loadingEl.style.transition = 'none';
-            loadingEl.style.display = 'flex';
-            loadingEl.style.opacity = '1';
-            loadingEl.style.visibility = 'visible';
-            loadingEl.offsetHeight; // Force reflow
-            loadingEl.style.transition = 'opacity 0.5s ease-out';
-          }
+        if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+        var html = document.documentElement;
+        var STAR_SEED = 101; // deterministic seed base
+        var PAGES = [
+          '/',
+          '/timeline',
+          '/projects',
+          '/education',
+          '/skills-experience',
+          '/research',
+          '/life',
+          '/honors',
+          '/contact',
+          '/resume',
+          '/socials',
+          '/personal'
+        ];
+        var STAR_VARIANTS = {
+          '/timeline': 0,
+          '/projects': 1,
+          '/education': 2,
+          '/skills-experience': 0,
+          '/research': 1,
+          '/life': 2,
+          '/honors': 0,
+          '/contact': 1,
+          '/resume': 2,
+          '/socials': 0,
+          '/personal': 1
+        };
+
+        function seededRandom(seed) {
+          return function() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+          };
         }
+
+        function generateStarTile(seed) {
+          var width = 1200;
+          var height = 600;
+          var canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          var ctx = canvas.getContext('2d');
+          if (!ctx) return '';
+
+          var rand = seededRandom(seed || 999);
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, width, height);
+
+          var starCount = 220;
+          for (var i = 0; i < starCount; i++) {
+            var x = rand() * width;
+            var y = rand() * height;
+            var radius = rand() * 0.9 + 0.3;
+            var opacity = rand() * 0.35 + 0.2;
+            ctx.fillStyle = 'rgba(255, 255, 255, ' + opacity + ')';
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          return 'url(' + canvas.toDataURL('image/png') + ')';
+        }
+
+        var STAR_VARIANT_CACHE = {};
+
+        window.__getStarVariant = function(variant) {
+          var key = String(variant || 0);
+          if (STAR_VARIANT_CACHE[key]) return STAR_VARIANT_CACHE[key];
+          var seed = STAR_SEED + (variant || 0) * 1000;
+          var tile = generateStarTile(seed);
+          STAR_VARIANT_CACHE[key] = tile;
+          return tile;
+        };
+
+        window.__getStarBg = function() {
+          return window.__getStarVariant(0);
+        };
+
+        document.body.classList.add('page-loaded');
+        document.documentElement.classList.add('page-loaded');
+        html.dataset.slide = 'center';
+        html.dataset.slidePhase = 'centered';
+
+        // Set deterministic panorama background before rendering
+        var path = window.location.pathname || '/';
+        var starBg = window.__getStarBg();
+        document.documentElement.style.setProperty('--panorama-bg', starBg);
+        sessionStorage.setItem('star-bg:' + path, starBg);
       })();
       
-      // Show loading screen immediately when page loads
-      (function() {
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('show-loading'));
-        }
-      })();
-      
-      // Intercept all link clicks for carousel navigation
-      // Setup immediately, no waiting for DOMContentLoaded
-      (function() {
-        if (typeof document === 'undefined') return;
-        
-        function handleClick(e) {
-          try {
-            var target = e.target;
-            var link = target.closest ? target.closest('a[href]') : null;
-            if (!link) {
-              // Fallback for older browsers
-              var parent = target;
-              while (parent && parent !== document) {
-                if (parent.tagName === 'A' && parent.href) {
-                  link = parent;
-                  break;
-                }
-                parent = parent.parentElement;
-              }
-            }
-            
-            if (link && link.href) {
-              var href = link.getAttribute('href');
-              if (!href) return;
-              
-              var isExternal = !href.startsWith('/') && !href.startsWith(window.location.origin);
-              var isSpecial = href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#');
-              
-              if (!isExternal && !isSpecial) {
-                // Same origin navigation - let carousel handle it
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                
-                // Trigger carousel navigation via custom event
-                window.dispatchEvent(new CustomEvent('carousel-navigate', { 
-                  detail: { path: href } 
-                }));
-              }
-            }
-          } catch (err) {
-            console.error('Error in click handler:', err);
-          }
-        }
-        
-        // Add listener immediately in capture phase (highest priority)
-        document.addEventListener('click', handleClick, true);
-      })();
+      // Link clicks use normal navigation (no sliding)
     </script>
   </body>
 </html>

@@ -13,7 +13,7 @@ const PLANETS = [
     period: 87.97,
     initialAngle: 0,
     page: '/timeline',
-    pageName: 'timeline'
+    pageName: 'gallery'
   },
   { 
     name: 'Venus', 
@@ -23,7 +23,7 @@ const PLANETS = [
     period: 224.7,
     initialAngle: Math.PI / 3,
     page: '/projects',
-    pageName: 'projects'
+    pageName: 'timeline'
   },
   { 
     name: 'Earth', 
@@ -33,7 +33,7 @@ const PLANETS = [
     period: 365.25,
     initialAngle: Math.PI / 2,
     page: '/education',
-    pageName: 'education'
+    pageName: 'projects'
   },
   { 
     name: 'Mars', 
@@ -42,8 +42,8 @@ const PLANETS = [
     distance: 11, 
     period: 686.98,
     initialAngle: Math.PI / 4,
-    page: '/skills-experience',
-    pageName: 'skills & experience'
+    page: '/research',
+    pageName: 'research'
   },
   { 
     name: 'Jupiter', 
@@ -52,8 +52,8 @@ const PLANETS = [
     distance: 15, 
     period: 4332.59,
     initialAngle: Math.PI / 6,
-    page: '/research',
-    pageName: 'research'
+    page: '/personal',
+    pageName: 'placeholder'
   },
   { 
     name: 'Saturn', 
@@ -62,8 +62,8 @@ const PLANETS = [
     distance: 19, 
     period: 10759.22,
     initialAngle: Math.PI / 5,
-    page: '/life',
-    pageName: 'life'
+    page: '/resume',
+    pageName: 'experience'
   },
   { 
     name: 'Uranus', 
@@ -82,8 +82,8 @@ const PLANETS = [
     distance: 30, 
     period: 60182,
     initialAngle: Math.PI / 8,
-    page: '/contact',
-    pageName: 'contact'
+    page: '/life',
+    pageName: 'life'
   },
 ];
 
@@ -452,9 +452,36 @@ function Planet({ name, color, size, distance, period, initialAngle, page, pageN
       </group>
       
       {/* Orbit path */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+          const worldPosition = new THREE.Vector3();
+          meshRef.current?.getWorldPosition(worldPosition);
+          const vector = worldPosition.clone().project(camera);
+          const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+          window.dispatchEvent(new CustomEvent('planet-hover', {
+            detail: {
+              isHovering: true,
+              planetName: name,
+              planetData: { x, y, size: size * 50 },
+            },
+          }));
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
+      >
         <ringGeometry args={[distance - 0.1, distance + 0.1, 64]} />
-        <meshBasicMaterial color={color} opacity={0.15} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          color={color}
+          opacity={hovered ? 0.55 : 0.15}
+          transparent
+          side={THREE.DoubleSide}
+        />
       </mesh>
     </group>
   );
@@ -551,7 +578,7 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
     ctx.lineWidth = 3;
     const centerX = 256;
     const centerY = 100;
-    const radius = 40;
+    const radius = 21;
     ctx.beginPath();
     for (let i = 0; i < 6; i++) {
       const angle = (Math.PI / 3) * i;
@@ -617,8 +644,8 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
         <meshStandardMaterial
           color={planet.color}
           emissive={planet.color}
-          emissiveIntensity={0.3}
-          opacity={0.6}
+          emissiveIntensity={hovered ? 0.55 : 0.3}
+          opacity={hovered ? 0.9 : 0.6}
           transparent
           side={THREE.DoubleSide}
           metalness={0.9}
@@ -651,9 +678,36 @@ function Saturn({ distance, page, pageName, onClick }: { distance: number; page:
       </group>
       
       {/* Orbit path */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+          const worldPosition = new THREE.Vector3();
+          meshRef.current?.getWorldPosition(worldPosition);
+          const vector = worldPosition.clone().project(camera);
+          const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+          window.dispatchEvent(new CustomEvent('planet-hover', {
+            detail: {
+              isHovering: true,
+              planetName: 'Saturn',
+              planetData: { x, y, size: planet.size * 50 },
+            },
+          }));
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
+      >
         <ringGeometry args={[distance - 0.1, distance + 0.1, 64]} />
-        <meshBasicMaterial color={planet.color} opacity={0.15} transparent side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          color={planet.color}
+          opacity={hovered ? 0.55 : 0.15}
+          transparent
+          side={THREE.DoubleSide}
+        />
       </mesh>
     </group>
   );
@@ -1110,6 +1164,7 @@ function Sun({ onClick }: { onClick: () => void }) {
 // Asteroid Belt between Mars and Jupiter - optimized with single useFrame
 function AsteroidBelt() {
   const groupRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
   const asteroidsRef = useRef<Array<{
     mesh: THREE.Mesh;
     angle: number;
@@ -1126,16 +1181,18 @@ function AsteroidBelt() {
     
     const count = 30; // Further reduced for performance
     const material = new THREE.MeshStandardMaterial({ 
-      color: "#8B7355", 
-      emissive: "#8B7355", 
-      emissiveIntensity: 0.1 
+      color: "#B99B6B",
+      emissive: "#B99B6B",
+      emissiveIntensity: 0.12,
+      roughness: 0.9,
+      metalness: 0.1,
     });
     
     asteroidsRef.current = Array.from({ length: count }, () => {
       const angle = Math.random() * Math.PI * 2;
       const radius = 12.5 + (Math.random() - 0.5) * 1.5;
       const y = (Math.random() - 0.5) * 0.5;
-      const size = Math.random() * 0.08 + 0.02;
+      const size = Math.random() * 0.16 + 0.06;
       
       const geometry = new THREE.SphereGeometry(1, 6, 6);
       const mesh = new THREE.Mesh(geometry, material);
@@ -1182,12 +1239,49 @@ function AsteroidBelt() {
     });
   });
 
-  return <group ref={groupRef} />;
+  return (
+    <group ref={groupRef}>
+      {/* Hover/click ring for Asteroid Belt */}
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onClick={() => {
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/skills-experience' } }));
+          }
+        }}
+      >
+        <ringGeometry args={[12.2, 12.6, 64]} />
+        <meshBasicMaterial color="#A0988A" opacity={hovered ? 0.4 : 0.05} transparent side={THREE.DoubleSide} />
+      </mesh>
+      {hovered && (
+        <Html position={[0, 1.2, 0]} transform occlude style={{ pointerEvents: 'none' }}>
+          <div
+            style={{
+              fontSize: '26px',
+              fontWeight: '400',
+              color: '#A0988A',
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 18px rgba(160, 152, 138, 0.7), 0 0 36px rgba(160, 152, 138, 0.5)',
+              transform: 'translateX(-50%)',
+              textTransform: 'lowercase',
+              letterSpacing: '0.5px',
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            education
+          </div>
+        </Html>
+      )}
+    </group>
+  );
 }
 
-// Kuiper Belt beyond Neptune - optimized with single useFrame
+// Kuiper Belt beyond Neptune (icy bodies) - optimized with single useFrame
 function KuiperBelt() {
   const groupRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
   const objectsRef = useRef<Array<{
     mesh: THREE.Mesh;
     angle: number;
@@ -1202,18 +1296,20 @@ function KuiperBelt() {
   useEffect(() => {
     if (!groupRef.current) return;
     
-    const count = 25; // Further reduced for performance
+    const count = 40; // Sparse icy bodies beyond Neptune
     const material = new THREE.MeshStandardMaterial({ 
-      color: "#4A5568", 
-      emissive: "#4A5568", 
-      emissiveIntensity: 0.1 
+      color: "#BCD9FF",
+      emissive: "#8DB9FF",
+      emissiveIntensity: 0.16,
+      roughness: 0.85,
+      metalness: 0.0,
     });
     
     objectsRef.current = Array.from({ length: count }, () => {
       const angle = Math.random() * Math.PI * 2;
-      const radius = 32 + (Math.random() - 0.5) * 3;
-      const y = (Math.random() - 0.5) * 1;
-      const size = Math.random() * 0.12 + 0.03;
+      const radius = 38 + (Math.random() - 0.5) * 6; // farther than Neptune (30)
+      const y = (Math.random() - 0.5) * 1.6; // thin disk with slight thickness
+      const size = Math.random() * 0.26 + 0.08;
       
       const geometry = new THREE.SphereGeometry(1, 6, 6);
       const mesh = new THREE.Mesh(geometry, material);
@@ -1231,7 +1327,7 @@ function KuiperBelt() {
         radius,
         y,
         size,
-        rotationSpeed: Math.random() * 0.005 + 0.002,
+        rotationSpeed: Math.random() * 0.002 + 0.0015,
         startTime: Date.now(),
       };
     });
@@ -1260,7 +1356,126 @@ function KuiperBelt() {
     });
   });
 
-  return <group ref={groupRef} />;
+  return (
+    <group ref={groupRef}>
+      {/* Hover/click ring for Kuiper Belt */}
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onClick={() => {
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/socials' } }));
+          }
+        }}
+      >
+        <ringGeometry args={[38.6, 39.4, 64]} />
+        <meshBasicMaterial color="#7AA6D6" opacity={hovered ? 0.4 : 0.05} transparent side={THREE.DoubleSide} />
+      </mesh>
+      {hovered && (
+        <Html position={[0, 1.4, 0]} transform occlude style={{ pointerEvents: 'none' }}>
+          <div
+            style={{
+              fontSize: '26px',
+              fontWeight: '400',
+              color: '#7AA6D6',
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 18px rgba(122, 166, 214, 0.7), 0 0 36px rgba(122, 166, 214, 0.5)',
+              transform: 'translateX(-50%)',
+              textTransform: 'lowercase',
+              letterSpacing: '0.5px',
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            skills
+          </div>
+        </Html>
+      )}
+    </group>
+  );
+}
+
+// Simple satellite drifting in deep space
+function Satellite() {
+  const groupRef = useRef<THREE.Group>(null);
+  const startTimeRef = useRef(Date.now());
+  const [hovered, setHovered] = useState(false);
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const elapsed = (Date.now() - startTimeRef.current) / 1000;
+    const radius = 18;
+    const angle = elapsed * 0.01;
+    groupRef.current.position.x = Math.cos(angle) * radius;
+    groupRef.current.position.z = Math.sin(angle) * radius;
+    groupRef.current.position.y = 4 + Math.sin(elapsed * 0.3) * 0.5;
+    groupRef.current.rotation.y += 0.002;
+  });
+
+  return (
+    <group
+      ref={groupRef}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      onClick={() => {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/contact' } }));
+        }
+      }}
+    >
+      <mesh>
+        <boxGeometry args={[0.8, 0.28, 0.26]} />
+        <meshStandardMaterial
+          color={hovered ? '#E3EBF7' : '#C0C7D6'}
+          emissive={hovered ? '#E3EBF7' : '#C0C7D6'}
+          emissiveIntensity={hovered ? 0.6 : 0.25}
+        />
+      </mesh>
+      <mesh position={[0, 0, 0.5]}>
+        <boxGeometry args={[0.26, 0.16, 0.7]} />
+        <meshStandardMaterial
+          color={hovered ? '#D6DFEA' : '#9AA5B1'}
+          emissive={hovered ? '#D6DFEA' : '#9AA5B1'}
+          emissiveIntensity={hovered ? 0.5 : 0.2}
+        />
+      </mesh>
+      <mesh position={[1.1, 0, 0]}>
+        <boxGeometry args={[1.5, 0.07, 0.5]} />
+        <meshStandardMaterial
+          color={hovered ? '#7FA8FF' : '#4B70DD'}
+          emissive={hovered ? '#7FA8FF' : '#4B70DD'}
+          emissiveIntensity={hovered ? 0.45 : 0.2}
+        />
+      </mesh>
+      <mesh position={[-1.1, 0, 0]}>
+        <boxGeometry args={[1.5, 0.07, 0.5]} />
+        <meshStandardMaterial
+          color={hovered ? '#7FA8FF' : '#4B70DD'}
+          emissive={hovered ? '#7FA8FF' : '#4B70DD'}
+          emissiveIntensity={hovered ? 0.45 : 0.2}
+        />
+      </mesh>
+      {hovered && (
+        <Html position={[0, 1.2, 0]} transform occlude style={{ pointerEvents: 'none' }}>
+          <div
+            style={{
+              fontSize: '26px',
+              fontWeight: '400',
+              color: '#C0C7D6',
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 18px rgba(192, 199, 214, 0.7), 0 0 36px rgba(192, 199, 214, 0.5)',
+              transform: 'translateX(-50%) translateY(-30px)',
+              textTransform: 'lowercase',
+              letterSpacing: '0.5px',
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            contacts
+          </div>
+        </Html>
+      )}
+    </group>
+  );
 }
 
 export default function SolarSystem() {
@@ -1283,7 +1498,7 @@ export default function SolarSystem() {
   };
 
   return (
-    <div className="w-full h-screen fixed inset-0">
+    <div className="w-full h-screen absolute inset-0 z-10">
       <Canvas
         camera={{ position: [0, 20, 35], fov: 60 }}
         gl={{ 
@@ -1311,6 +1526,7 @@ export default function SolarSystem() {
         />
         <AsteroidBelt />
         <KuiperBelt />
+        <Satellite />
         <Stars 
           radius={150} 
           depth={80} 

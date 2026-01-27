@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PlanetNav from '../components/PlanetNav';
 import MagicalHoverCard from '../components/MagicalHoverCard';
 import MagicalText from '../components/MagicalText';
 
@@ -14,22 +13,23 @@ const planetColor = '#8C7853'; // Mercury
 const planetColorRgb = '140, 120, 83';
 ---
 
-<Layout title="timeline">
+<Layout title="gallery">
   <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
+    <!-- Star background -->
+    <div class="absolute inset-0 page-starfield"></div>
     <!-- Mercury color tint -->
-    <div class="absolute inset-0 opacity-15 z-10" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
-    <PlanetNav client:load />
-    <div class="container mx-auto px-8 py-24 relative z-10">
-      <div class="max-w-4xl mx-auto animate-fade-in">
+    <div class="absolute inset-0 opacity-20 z-10" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.18), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
+    <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
+      <div class="max-w-6xl animate-fade-in">
         <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(140, 120, 83, 0.4);">
           <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
-            <MagicalText text="timeline" color={planetColor} colorRgb={planetColorRgb} client:load />
+            <MagicalText text="gallery" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(140, 120, 83, 0.6), transparent);"></div>
         </div>
-        <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border mb-8" style="border-color: rgba(140, 120, 83, 0.15);">
+        <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border mb-8" style="border-color: rgba(140, 120, 83, 0.15);">
           <p class="text-sm text-gray-300 font-light leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.7);">
-            This page will showcase my timeline. Content coming soon.
+            This page will showcase my gallery. Content coming soon.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ const planetColorRgb = '140, 120, 83';
               className={`animate-fade-in`}
               client:load
             >
-              <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border animate-fade-in" style={`border-color: rgba(140, 120, 83, 0.15); animation-delay: ${0.1 + entry.id * 0.05}s;`}>
+              <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border animate-fade-in" style={`border-color: rgba(140, 120, 83, 0.15); animation-delay: ${0.1 + entry.id * 0.05}s;`}>
                 <h2 class="text-xl font-medium mb-4 lowercase tracking-tight" style="color: #8C7853; text-shadow: 0 0 15px rgba(140, 120, 83, 0.4);">
                   timeline entry {entry.id}
                 </h2>

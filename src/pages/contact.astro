@@ -1,25 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PlanetNav from '../components/PlanetNav';
 import MagicalHoverCard from '../components/MagicalHoverCard';
 import SocialCard from '../components/SocialCard';
 import MagicalText from '../components/MagicalText';
 
-// Generate many stars for starfield
-const generateStarField = () => {
-  const stars = [];
-  for (let i = 0; i < 200; i++) {
-    const x = Math.random() * 100;
-    const y = Math.random() * 100;
-    const size = Math.random() * 2 + 0.5;
-    const opacity = Math.random() * 0.5 + 0.3;
-    stars.push(`radial-gradient(${size}px ${size}px at ${x}% ${y}%, rgba(255, 255, 255, ${opacity}), transparent)`);
-  }
-  return stars.join(', ');
-};
-
-const planetColor = '#4B70DD'; // Neptune
-const planetColorRgb = '75, 112, 221';
+const planetColor = '#C0C7D6'; // Satellite
+const planetColorRgb = '192, 199, 214';
 
 const socialLinks = [
   {
@@ -57,18 +43,17 @@ const socialLinks = [
 
 ---
 
-<Layout title="contact">
-  <div class="min-h-screen relative overflow-hidden" style="background: #000000;">
-    <!-- Star background - many stars -->
-    <div class="absolute inset-0" style={`background-image: ${generateStarField()}; background-size: 100% 100%;`}></div>
-    <!-- Neptune color tint -->
+<Layout title="contacts">
+  <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
+    <!-- Star background -->
+    <div class="absolute inset-0 page-starfield"></div>
+    <!-- Satellite color tint -->
     <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
-    <PlanetNav client:load />
-    <div class="container mx-auto px-8 py-24 relative z-10">
-      <div class="max-w-6xl mx-auto animate-fade-in">
+    <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
+      <div class="max-w-7xl animate-fade-in">
         <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(75, 112, 221, 0.4);">
           <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
-            <MagicalText text="contact" color={planetColor} colorRgb={planetColorRgb} client:load />
+            <MagicalText text="contacts" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(75, 112, 221, 0.6), transparent);"></div>
         </div>

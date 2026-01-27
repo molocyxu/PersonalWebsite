@@ -3,7 +3,7 @@ import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
 
 // Beam component that calculates dynamic height
 function BeamComponent({ planetHoverData, smoothY }: { planetHoverData: { name: string; x: number; y: number; size: number }; smoothY: MotionValue<number> }) {
-  const [beamHeight, setBeamHeight] = useState(45);
+  const [beamHeight, setBeamHeight] = useState(36);
   
   useEffect(() => {
     let rafId: number;
@@ -15,9 +15,9 @@ function BeamComponent({ planetHoverData, smoothY }: { planetHoverData: { name: 
       const planetRadius = planetHoverData.size / 2;
       // Beam extends from UFO base (ufoY + 12px offset) to just above planet surface
       const distance = Math.abs((ufoY + 12) - (planetY - planetRadius));
-      // Beam should extend just slightly above planet - 1/3 of current length (10-18px range)
-      const calculatedHeight = distance / 3;
-      const height = Math.max(10, Math.min(18, calculatedHeight));
+      // Beam should extend just slightly above planet - shorter range (8-14px)
+      const calculatedHeight = distance / 4;
+      const height = Math.max(8, Math.min(14, calculatedHeight));
       setBeamHeight(height);
       rafId = requestAnimationFrame(updateBeamHeight);
     };
@@ -39,11 +39,12 @@ function BeamComponent({ planetHoverData, smoothY }: { planetHoverData: { name: 
         left: '0', // Aligned to left edge of base
         width: '28px', // Match UFO base width exactly
         height: `${beamHeight}px`, // Dynamic height - extends just slightly above planet
-        background: 'linear-gradient(to bottom, rgba(150, 150, 255, 0.4), rgba(120, 120, 255, 0.3), rgba(100, 100, 255, 0.2), transparent)',
+        background: 'linear-gradient(to bottom, rgba(150, 150, 255, 0.38), rgba(120, 120, 255, 0.28), rgba(100, 100, 255, 0.18), transparent)',
         transformOrigin: 'top center',
-        filter: 'blur(6px)',
-        boxShadow: '0 0 20px rgba(150, 150, 255, 0.5), 0 0 40px rgba(100, 100, 255, 0.3)',
-        clipPath: 'polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%)', // Adjusted for 28px width
+        filter: 'blur(5px)',
+        boxShadow: '0 0 18px rgba(150, 150, 255, 0.45), 0 0 36px rgba(100, 100, 255, 0.25)',
+        // Trapezoid: narrow at top (UFO base), wider at bottom
+        clipPath: 'polygon(25% 0%, 75% 0%, 140% 100%, -40% 100%)',
       }}
       initial={{ opacity: 0, scaleY: 0 }}
       animate={{ opacity: 1, scaleY: 1 }}
@@ -58,7 +59,7 @@ function BeamComponent({ planetHoverData, smoothY }: { planetHoverData: { name: 
             width: '3px',
             height: '3px',
             background: 'rgba(200, 200, 255, 0.8)',
-            left: `${15 + Math.random() * 70}%`, // Adjusted for 28px beam width
+            left: `${5 + Math.random() * 90}%`,
             top: `${Math.random() * 100}%`,
             boxShadow: '0 0 6px rgba(200, 200, 255, 0.8), 0 0 12px rgba(150, 150, 255, 0.6)',
           }}
@@ -82,7 +83,7 @@ function BeamComponent({ planetHoverData, smoothY }: { planetHoverData: { name: 
           key={`wave-${i}`}
           className="absolute top-0 left-1/2 -translate-x-1/2 rounded-full"
           style={{
-                    width: `${22 + i * 4}px`, // Adjusted for 28px beam width
+                    width: `${26 + i * 8}px`,
             height: '100%',
             background: `radial-gradient(ellipse at center, rgba(150, 150, 255, ${0.2 - i * 0.05}), transparent)`,
           }}
@@ -111,11 +112,25 @@ export default function UFOCursor() {
   const ufoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Hide cursor on homepage
-    document.body.style.cursor = 'none';
-    
+    const applyCursorState = () => {
+      const path = window.location.pathname || '/';
+      if (path === '/') {
+        document.body.style.cursor = 'none';
+      } else {
+        document.body.style.cursor = '';
+      }
+    };
+
+    applyCursorState();
+
+    const handlePathChange = () => applyCursorState();
+    window.addEventListener('panorama-path-change', handlePathChange);
+    window.addEventListener('popstate', handlePathChange);
+
     return () => {
       document.body.style.cursor = '';
+      window.removeEventListener('panorama-path-change', handlePathChange);
+      window.removeEventListener('popstate', handlePathChange);
     };
   }, []);
 

@@ -3,17 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import SolarSystem from '../components/SolarSystem';
 import TimeDisplay from '../components/TimeDisplay';
 import NameDisplay from '../components/NameDisplay';
-import PlanetNav from '../components/PlanetNav';
 import MoveAroundHint from '../components/MoveAroundHint';
 import UFOCursor from '../components/UFOCursor';
 import ParallaxBackground from '../components/ParallaxBackground';
 ---
 
 <Layout title="home">
-  <SolarSystem client:load />
+  <SolarSystem client:only="react" />
   <TimeDisplay client:load />
   <NameDisplay client:load />
-  <PlanetNav client:load />
   <MoveAroundHint client:load />
   <UFOCursor client:load />
   <ParallaxBackground client:load />
