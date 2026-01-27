@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 
 // Global loading state that can be set from anywhere
 let globalLoadingState = true;
@@ -9,75 +10,69 @@ export function setLoading(loading: boolean) {
   loadingListeners.forEach(listener => listener(loading));
 }
 
-export function getLoading() {
-  return globalLoadingState;
-}
-
-// Check if all resources are loaded
+// Check if all resources are loaded - optimized for speed
 function checkAllResourcesLoaded(): Promise<void> {
   return new Promise((resolve) => {
-    // Check if document is ready
-    if (document.readyState !== 'complete') {
-      const loadHandler = () => {
-        // Wait a bit more for fonts and images to fully render
-        setTimeout(() => {
-          checkImagesAndFonts().then(() => {
-            setTimeout(resolve, 100);
-          });
-        }, 50);
-      };
-      window.addEventListener('load', loadHandler, { once: true });
+    // If document is already complete, check immediately
+    if (document.readyState === 'complete') {
+      checkImagesAndFonts().then(() => {
+        resolve();
+      });
       return;
     }
 
-    // Document is already complete, check images and fonts
+    // Wait for DOMContentLoaded first (faster than 'load')
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        // Then check for remaining resources with minimal wait
+        checkImagesAndFonts().then(() => {
+          resolve();
+        });
+      }, { once: true });
+      return;
+    }
+
+    // Interactive or complete - check immediately
     checkImagesAndFonts().then(() => {
-      setTimeout(resolve, 100);
+      resolve();
     });
   });
 }
 
-// Check images and fonts
+// Check images and fonts - optimized for speed
 function checkImagesAndFonts(): Promise<void> {
   return new Promise((resolve) => {
-    // Check all images
-    const images = Array.from(document.images);
-    const imagePromises = images.map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise<void>((resolveImg) => {
-        const timeout = setTimeout(() => resolveImg(), 5000); // Timeout after 5s
-        img.addEventListener('load', () => {
-          clearTimeout(timeout);
-          resolveImg();
-        }, { once: true });
-        img.addEventListener('error', () => {
-          clearTimeout(timeout);
-          resolveImg();
-        }, { once: true });
-      });
-    });
-
-    // Wait for all images or timeout
-    Promise.all(imagePromises).then(() => {
-      // Wait for fonts to load (document.fonts is not always available)
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          resolve();
-        }).catch(() => {
-          // Fallback if fonts API fails
-          setTimeout(resolve, 100);
-        });
-      } else {
-        // Fallback if fonts API not available
-        setTimeout(resolve, 200);
-      }
-    });
+    // Don't wait for images - they can load in background
+    // Only check fonts which are critical for rendering
+    checkFontsAndResolve(resolve);
   });
+}
+
+// Check fonts and resolve - optimized
+function checkFontsAndResolve(resolve: () => void) {
+  // Don't wait for fonts - they can load in background
+  // Resolve immediately for fastest page display
+  resolve();
 }
 
 export default function LoadingScreen() {
-  // Start with loading true to show immediately
+  // Start with loading true to show immediately on initial load
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Show loading screen immediately on mount (before any assets load)
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const loadingEl = document.getElementById('loading-screen');
+      if (loadingEl) {
+        loadingEl.style.transition = 'none';
+        loadingEl.style.display = 'flex';
+        loadingEl.style.opacity = '1';
+        loadingEl.style.visibility = 'visible';
+        loadingEl.offsetHeight; // Force reflow
+        loadingEl.style.transition = 'opacity 0.5s ease-out';
+      }
+    }
+  }, []);
 
   // Generate many star positions for rich starfield (memoized)
   const starField = useMemo(() => {
@@ -109,17 +104,39 @@ export default function LoadingScreen() {
     };
     window.addEventListener('show-loading', handleShowLoading, { passive: true });
 
-    // Hide loading screen once all resources are loaded
-    const handleAllLoaded = async () => {
-      await checkAllResourcesLoaded();
+    // Hide loading screen once DOM is ready - much faster
+    const handleAllLoaded = () => {
+      // Start fading out loading screen immediately
       setLoading(false);
+      
+      // Use requestAnimationFrame for smooth transition
+      requestAnimationFrame(() => {
+        const loadingEl = document.getElementById('loading-screen');
+        if (loadingEl) {
+          loadingEl.style.opacity = '0';
+          // Trigger page content fade-in simultaneously
+          document.body.classList.add('page-loaded');
+          document.documentElement.classList.add('page-loaded');
+          
+          // Hide after transition
+          setTimeout(() => {
+            loadingEl.style.visibility = 'hidden';
+          }, 500);
+        } else {
+          document.body.classList.add('page-loaded');
+          document.documentElement.classList.add('page-loaded');
+        }
+      });
     };
 
-    // Check if already loaded
-    if (document.readyState === 'complete') {
-      handleAllLoaded();
+    // Hide loading as soon as DOM is interactive (much faster than waiting for all resources)
+    // Use a very short delay to ensure smooth transition
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      // Already ready - hide with minimal delay
+      setTimeout(handleAllLoaded, 50);
     } else {
-      window.addEventListener('load', handleAllLoaded, { once: true });
+      // Wait for DOMContentLoaded only (not 'load' event)
+      document.addEventListener('DOMContentLoaded', handleAllLoaded, { once: true });
     }
 
     return () => {
@@ -133,25 +150,52 @@ export default function LoadingScreen() {
 
   return (
     <div
+      id="loading-screen"
       className="fixed inset-0 z-[999999] flex items-center justify-center"
       style={{
-        background: '#000000', // Pure black background
+        background: 'transparent', // Transparent to show persistent star background
+        display: 'flex', // Always rendered for instant display
+        opacity: isLoading ? 1 : 0,
+        transition: 'opacity 0.5s ease-out', // Slower fade for smoother transition
+        pointerEvents: isLoading ? 'auto' : 'none',
+        visibility: isLoading ? 'visible' : 'hidden',
+        // Ensure star background is visible behind loading screen
+        backgroundColor: 'transparent',
+        // Ensure it covers the full viewport
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        // Ensure it's above everything but below carousel container
+        zIndex: 999998,
       }}
     >
-      {/* Star background - many stars */}
+      {/* Subtle dark overlay - don't hide the star background completely */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: starField,
-          backgroundSize: '100% 100%',
+          background: 'rgba(0, 0, 0, 0.3)', // Lighter overlay to show stars
+          backdropFilter: 'blur(1px)',
+          transition: 'opacity 0.5s ease-out',
+          opacity: isLoading ? 1 : 0,
         }}
       />
 
       {/* Loading text */}
-      <div
+      <motion.div
         className="relative z-10"
         style={{
           fontFamily: "'Inter', sans-serif",
+        }}
+        animate={{
+          opacity: isLoading ? 1 : 0,
+        }}
+        transition={{
+          duration: 0.5,
+          ease: 'easeOut',
         }}
       >
         <h1
@@ -160,12 +204,12 @@ export default function LoadingScreen() {
             color: 'rgba(255, 255, 255, 0.9)',
             textShadow: '0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3)',
             letterSpacing: '2px',
-            animation: 'loadingPulse 2s ease-in-out infinite',
+            animation: isLoading ? 'loadingPulse 2s ease-in-out infinite' : 'none',
           }}
         >
           stars aligning...
         </h1>
-      </div>
+      </motion.div>
     </div>
   );
 }

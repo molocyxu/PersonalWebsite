@@ -10,29 +10,14 @@ const timelineEntries = Array.from({ length: 15 }, (_, i) => ({
   date: new Date(2020 + i, i % 12, (i * 7) % 28 + 1),
 }));
 
-// Generate many stars for starfield
-const generateStarField = () => {
-  const stars = [];
-  for (let i = 0; i < 200; i++) {
-    const x = Math.random() * 100;
-    const y = Math.random() * 100;
-    const size = Math.random() * 2 + 0.5;
-    const opacity = Math.random() * 0.5 + 0.3;
-    stars.push(`radial-gradient(${size}px ${size}px at ${x}% ${y}%, rgba(255, 255, 255, ${opacity}), transparent)`);
-  }
-  return stars.join(', ');
-};
-
 const planetColor = '#8C7853'; // Mercury
 const planetColorRgb = '140, 120, 83';
 ---
 
 <Layout title="timeline">
-  <div class="min-h-screen relative overflow-hidden" style="background: #000000;">
-    <!-- Star background - many stars -->
-    <div class="absolute inset-0" style={`background-image: ${generateStarField()}; background-size: 100% 100%;`}></div>
+  <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
     <!-- Mercury color tint -->
-    <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
+    <div class="absolute inset-0 opacity-15 z-10" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
     <PlanetNav client:load />
     <div class="container mx-auto px-8 py-24 relative z-10">
       <div class="max-w-4xl mx-auto animate-fade-in">

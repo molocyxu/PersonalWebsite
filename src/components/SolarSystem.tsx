@@ -1265,26 +1265,20 @@ function KuiperBelt() {
 
 export default function SolarSystem() {
   const handlePlanetClick = (page: string) => {
-    // Show loading screen instantly BEFORE navigation
+    // Use carousel navigation instead of direct navigation
     if (typeof window !== 'undefined') {
-      const event = new CustomEvent('show-loading');
-      window.dispatchEvent(event);
-      // Small delay to ensure loading screen appears
-      setTimeout(() => {
-        window.location.href = page;
-      }, 10);
+      window.dispatchEvent(new CustomEvent('carousel-navigate', { 
+        detail: { path: page } 
+      }));
     }
   };
 
   const handleSunClick = () => {
-    // Show loading screen instantly BEFORE navigation
+    // Use carousel navigation instead of direct navigation
     if (typeof window !== 'undefined') {
-      const event = new CustomEvent('show-loading');
-      window.dispatchEvent(event);
-      // Small delay to ensure loading screen appears
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 10);
+      window.dispatchEvent(new CustomEvent('carousel-navigate', { 
+        detail: { path: '/' } 
+      }));
     }
   };
 

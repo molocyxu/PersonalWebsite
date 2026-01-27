@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import LoadingScreen from '../components/LoadingScreen';
+import PersistentStarBackground from '../components/PersistentStarBackground';
+import ThreePaneCarousel from '../components/ThreePaneCarousel';
 
 export interface Props {
   title: string;
@@ -20,30 +22,73 @@ const { title } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <!-- Resource hints for faster navigation -->
+    <link rel="prefetch" href="/timeline" />
+    <link rel="prefetch" href="/projects" />
+    <link rel="prefetch" href="/contact" />
+    <!-- Performance optimization: defer non-critical scripts -->
+    <script>
+      // Show loading screen immediately - no waiting
+      (function() {
+        if (typeof document !== 'undefined') {
+          var loadingEl = document.getElementById('loading-screen');
+          if (!loadingEl) {
+            // Create loading screen element if it doesn't exist yet
+            var el = document.createElement('div');
+            el.id = 'loading-screen';
+            el.style.cssText = 'position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:transparent;opacity:1;visibility:visible;';
+            el.innerHTML = '<div style="font-family:\'Inter\',sans-serif;color:rgba(255,255,255,0.9);text-shadow:0 0 20px rgba(255,255,255,0.5);letter-spacing:2px;">stars aligning...</div>';
+            document.body.appendChild(el);
+          } else {
+            loadingEl.style.display = 'flex';
+            loadingEl.style.opacity = '1';
+            loadingEl.style.visibility = 'visible';
+          }
+        }
+      })();
+    </script>
     <title>{title} | alex zheng</title>
   </head>
-  <body>
+  <body style="overflow-x: hidden; position: relative;">
+    <PersistentStarBackground client:load />
     <LoadingScreen client:load />
+    <ThreePaneCarousel client:only="react" />
     <slot />
     <script is:inline>
-      // Show loading screen immediately when page loads
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('show-loading'));
-      }
-      
-      // Intercept all link clicks to show loading instantly (before navigation)
-      // Use DOMContentLoaded to ensure document is ready
-      if (typeof document !== 'undefined') {
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function() {
-            setupClickHandler();
-          });
-        } else {
-          setupClickHandler();
+      // Ensure loading screen is instantly visible - pre-render it
+      (function() {
+        if (typeof document !== 'undefined') {
+          // Reset page-loaded state
+          document.body.classList.remove('page-loaded');
+          document.documentElement.classList.remove('page-loaded');
+          
+          // Show loading screen INSTANTLY - no delays
+          var loadingEl = document.getElementById('loading-screen');
+          if (loadingEl) {
+            loadingEl.style.transition = 'none';
+            loadingEl.style.display = 'flex';
+            loadingEl.style.opacity = '1';
+            loadingEl.style.visibility = 'visible';
+            loadingEl.offsetHeight; // Force reflow
+            loadingEl.style.transition = 'opacity 0.5s ease-out';
+          }
         }
-      }
+      })();
       
-      function setupClickHandler() {
+      // Show loading screen immediately when page loads
+      (function() {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('show-loading'));
+        }
+      })();
+      
+      // Intercept all link clicks for carousel navigation
+      // Setup immediately, no waiting for DOMContentLoaded
+      (function() {
+        if (typeof document === 'undefined') return;
+        
         function handleClick(e) {
           try {
             var target = e.target;
@@ -68,22 +113,15 @@ const { title } = Astro.props;
               var isSpecial = href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#');
               
               if (!isExternal && !isSpecial) {
-                // Same origin navigation - show loading instantly BEFORE navigation
+                // Same origin navigation - let carousel handle it
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
                 
-                // Dispatch event synchronously for instant display
-                if (typeof window !== 'undefined') {
-                  window.dispatchEvent(new CustomEvent('show-loading'));
-                  
-                  // Use requestAnimationFrame to ensure loading screen renders before navigation
-                  requestAnimationFrame(function() {
-                    requestAnimationFrame(function() {
-                      window.location.href = href;
-                    });
-                  });
-                }
+                // Trigger carousel navigation via custom event
+                window.dispatchEvent(new CustomEvent('carousel-navigate', { 
+                  detail: { path: href } 
+                }));
               }
             }
           } catch (err) {
@@ -91,9 +129,9 @@ const { title } = Astro.props;
           }
         }
         
-        // Add listener in capture phase to catch clicks early
+        // Add listener immediately in capture phase (highest priority)
         document.addEventListener('click', handleClick, true);
-      }
+      })();
     </script>
   </body>
 </html>

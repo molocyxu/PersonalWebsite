@@ -16,9 +16,17 @@ const NAV_ITEMS = [
 function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEMS[0]; index: number; isActive: boolean; scale: number }) {
   const [isHovered, setIsHovered] = useState(false);
   
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('carousel-navigate', { 
+      detail: { path: item.path } 
+    }));
+  };
+
   return (
     <motion.a
       href={item.path}
+      onClick={handleClick}
       className="relative pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

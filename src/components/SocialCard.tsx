@@ -44,7 +44,7 @@ export default function SocialCard({ link, planetColorRgb }: SocialCardProps) {
   };
 
   const cardContent = (
-    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border-2 h-full flex flex-col items-center justify-center transition-all duration-300 hover:border-opacity-100" style={{ borderColor: `rgba(${planetColorRgb}, 0.5)`, borderWidth: '2px' }}>
+    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-8 border-2 min-h-[300px] flex flex-col items-center justify-center transition-all duration-300 hover:border-opacity-100" style={{ borderColor: `rgba(${planetColorRgb}, 0.5)`, borderWidth: '2px' }}>
       <div className="mb-4" style={{ color: link.color }}>
         {getIconSVG(link.icon)}
       </div>

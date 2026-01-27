@@ -236,8 +236,147 @@
   }
 }
 
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
+}
+
+/* Page content fade-in - starts hidden, fades in when page is loaded */
+body:not(.page-loaded) .container,
+body:not(.page-loaded) [class*="max-w"],
+body:not(.page-loaded) main,
+body:not(.page-loaded) > div:not(#loading-screen):not(#persistent-star-background) {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+body.page-loaded .container,
+body.page-loaded [class*="max-w"],
+body.page-loaded main,
+body.page-loaded > div:not(#loading-screen):not(#persistent-star-background) {
+  opacity: 1;
+  transform: translateX(0);
+  animation: page-fade-in 0.8s ease-out forwards;
+}
+
+body.page-loaded [class*="animate-fade-in"] {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+/* Ensure loading screen is always visible when loading - pre-rendered for instant display */
+#loading-screen {
+  display: flex !important; /* Always rendered for instant display */
+  transition: opacity 0.5s ease-out !important;
+  will-change: opacity;
+}
+
+body:not(.page-loaded) #loading-screen {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.page-loaded #loading-screen {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* Persistent star background should always be visible - never disappears */
+#persistent-star-background {
+  z-index: 0 !important;
+  opacity: 1 !important;
+  display: block !important;
+  visibility: visible !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-attachment: fixed !important;
+  pointer-events: none !important;
+}
+
+/* Ensure star background is always behind everything */
+body > *:not(#persistent-star-background) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Carousel pages should not have their own backgrounds */
+.page-slide {
+  background: transparent !important;
+}
+
+.page-slide > div {
+  background: transparent !important;
+}
+
+/* Ensure persistent star background covers entire horizontal space */
+#persistent-star-background {
+  width: 100vw !important;
+  background-size: 100% 100% !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Smooth panning effect for carousel navigation */
+body, html {
+  overflow-x: hidden;
+  position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Ensure star background doesn't move during panning */
+#persistent-star-background {
+  will-change: auto !important;
+  transform: none !important;
+  position: fixed !important;
+  z-index: 0 !important;
+}
+
+/* Carousel container optimization */
+[data-carousel-container] {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Smooth fade-in for PlanetNav */
+body:not(.page-loaded) nav {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+body.page-loaded nav {
+  opacity: 1;
+  animation: page-fade-in 0.6s ease-out forwards;
+}
+
+/* Smooth page transitions - make navigation feel like panning */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure body has smooth transitions */
+body {
+  transition: opacity 0.3s ease-out;
+}
+
+/* Prevent flash of unstyled content */
+body:not(.page-loaded) {
+  overflow: hidden;
 }
 
 @keyframes loadingPulse {
