@@ -1256,7 +1256,7 @@ function AsteroidBelt() {
         <meshBasicMaterial color="#A0988A" opacity={hovered ? 0.4 : 0.05} transparent side={THREE.DoubleSide} />
       </mesh>
       {hovered && (
-        <Html position={[0, 1.2, 0]} transform occlude style={{ pointerEvents: 'none' }}>
+        <Html position={[12.6, 1.6, 0]} transform style={{ pointerEvents: 'none' }}>
           <div
             style={{
               fontSize: '26px',
@@ -1373,7 +1373,7 @@ function KuiperBelt() {
         <meshBasicMaterial color="#7AA6D6" opacity={hovered ? 0.4 : 0.05} transparent side={THREE.DoubleSide} />
       </mesh>
       {hovered && (
-        <Html position={[0, 1.4, 0]} transform occlude style={{ pointerEvents: 'none' }}>
+        <Html position={[39.2, 2.0, 0]} transform style={{ pointerEvents: 'none' }}>
           <div
             style={{
               fontSize: '26px',
