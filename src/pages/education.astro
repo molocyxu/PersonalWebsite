@@ -1,10 +1,140 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import MagicalHoverCard from '../components/MagicalHoverCard';
 import MagicalText from '../components/MagicalText';
 
 const planetColor = '#A0988A'; // Asteroid belt
 const planetColorRgb = '160, 152, 138';
+
+const planoWestCourses = [
+  'ap calculus bc',
+  'ap physics c: mechanics',
+  'ap physics c: e&m',
+  'ap computer science a',
+  'ap statistics',
+  'ap chemistry',
+  'ap biology',
+  'ap us history',
+  'ap world history',
+  'ap english language',
+  'ap english literature',
+  'ap macroeconomics',
+  'ap microeconomics',
+  'ap music theory',
+  'multivariable calculus',
+  'linear algebra',
+  'data structures',
+  'competitive programming',
+  'robotics systems',
+  'ai fundamentals',
+  'web systems',
+];
+
+const cmuCourses = [
+  '10-701 introduction to machine learning',
+  '15-213 introduction to computer systems',
+  '15-151 mathematical foundations',
+  '15-122 principles of imperative computation',
+  '15-150 principles of functional programming',
+  '15-210 parallel and sequential data structures',
+  '15-251 great ideas in theoretical cs',
+  '15-440 distributed systems',
+  '15-445 database systems',
+  '15-455 algorithms',
+  '15-462 computer graphics',
+  '15-465 animation',
+  '16-311 robotics',
+  '16-385 computer vision',
+  '21-127 concepts of mathematics',
+  '21-241 matrices and linear transformations',
+  '21-259 calculus in three dimensions',
+  '36-226 probability and statistics',
+  '76-101 interpretation and argument',
+];
+
+const cmuActivities = [
+  'ml research assistant',
+  'robotics team',
+  'graphics lab',
+  'hci studio',
+  'teaching assistant',
+  'hackathons',
+  'open-source work',
+  'design projects',
+  'startup incubator',
+  'cybersecurity club',
+  'astronomy outreach',
+];
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+const seededRandom = (seed: number) => () => {
+  seed = (seed * 9301 + 49297) % 233280;
+  return seed / 233280;
+};
+
+const FIELD_WIDTH = 1500;
+const FIELD_HEIGHT = 720;
+
+const buildCluster = (
+  labels: string[],
+  centerX: number,
+  centerY: number,
+  spreadX: number,
+  spreadY: number,
+  seedOffset: number,
+) => {
+  const rand = seededRandom(101 + seedOffset);
+  const placed: Array<{ x: number; y: number; size: number }> = [];
+  const paddingPx = 6;
+
+  return labels.map((label, index) => {
+    const size = Math.round(14 + rand() * 18);
+    let x = centerX;
+    let y = centerY;
+
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      const angle = rand() * Math.PI * 2;
+      const radiusX = (rand() ** 0.6) * spreadX;
+      const radiusY = (rand() ** 0.6) * spreadY;
+      const nextX = clamp(centerX + Math.cos(angle) * radiusX, 4, 96);
+      const nextY = clamp(centerY + Math.sin(angle) * radiusY, 16, 92);
+
+      const hasOverlap = placed.some(({ x: otherX, y: otherY, size: otherSize }) => {
+        const dxPx = ((nextX - otherX) / 100) * FIELD_WIDTH;
+        const dyPx = ((nextY - otherY) / 100) * FIELD_HEIGHT;
+        const minDistance = (size + otherSize) * 0.5 + paddingPx;
+        return Math.hypot(dxPx, dyPx) < minDistance;
+      });
+
+      if (!hasOverlap) {
+        x = nextX;
+        y = nextY;
+        break;
+      }
+    }
+
+    placed.push({ x, y, size });
+
+    const rotation = Math.round(rand() * 360);
+    const spin = (10 + rand() * 18).toFixed(2);
+    const drift = (rand() * 4 - 2).toFixed(2);
+
+    return {
+      id: `${label}-${index}`,
+      label,
+      x,
+      y,
+      size,
+      rotation,
+      spin,
+      drift,
+    };
+  });
+};
+
+const planoWestAsteroids = buildCluster(planoWestCourses, 10, 56, 13, 18, 1);
+const cmuCourseAsteroids = buildCluster(cmuCourses, 52, 50, 16, 20, 2);
+const cmuActivityAsteroids = buildCluster(cmuActivities, 90, 66, 11, 16, 3);
 ---
 
 <Layout title="education">
@@ -21,38 +151,74 @@ const planetColorRgb = '160, 152, 138';
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(160, 152, 138, 0.6), transparent);"></div>
         </div>
-        <div id="cards">
-          <MagicalHoverCard
-            glowColor="rgba(160, 152, 138, 0.25)"
-            glowRadius={850}
-            glowOpacity={0.75}
-            transitionDuration={0.25}
-            client:load
-          >
-            <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(160, 152, 138, 0.15);">
-              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-                This page will showcase my education. Content coming soon.
-              </p>
+        <div class="asteroid-field">
+          <div class="cluster-title left-title">plano west</div>
+          <div class="cluster-subtitle left-subtitle">courses</div>
+
+          <div class="cluster-title mid-title">carnegie mellon</div>
+          <div class="cluster-subtitle mid-degree">
+            b.s. in c.s.<br />ml concentration<br />math minor
+          </div>
+          <div class="cluster-subtitle mid-subtitle">courses</div>
+
+          <div class="cluster-subtitle right-subtitle">activities</div>
+
+          {planoWestAsteroids.map((asteroid, index) => (
+            <div
+              key={asteroid.id}
+              class="asteroid-wrapper"
+              style={`left:${asteroid.x}%; top:${asteroid.y}%; --size:${asteroid.size}px; --rot:${asteroid.rotation}deg; --spin:${asteroid.spin}s; --drift:${asteroid.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={asteroid.label}
+            >
+              <div class="asteroid-rotator">
+                <div
+                  class={`asteroid asteroid-shape-${(index % 4) + 1}`}
+                  style={`width:${asteroid.size}px; height:${asteroid.size}px;`}
+                ></div>
+                <span class="asteroid-label">{asteroid.label}</span>
+              </div>
             </div>
-          </MagicalHoverCard>
+          ))}
+
+          {cmuCourseAsteroids.map((asteroid, index) => (
+            <div
+              key={asteroid.id}
+              class="asteroid-wrapper"
+              style={`left:${asteroid.x}%; top:${asteroid.y}%; --size:${asteroid.size}px; --rot:${asteroid.rotation}deg; --spin:${asteroid.spin}s; --drift:${asteroid.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={asteroid.label}
+            >
+              <div class="asteroid-rotator">
+                <div
+                  class={`asteroid asteroid-shape-${(index % 4) + 1}`}
+                  style={`width:${asteroid.size}px; height:${asteroid.size}px;`}
+                ></div>
+                <span class="asteroid-label">{asteroid.label}</span>
+              </div>
+            </div>
+          ))}
+
+          {cmuActivityAsteroids.map((asteroid, index) => (
+            <div
+              key={asteroid.id}
+              class="asteroid-wrapper"
+              style={`left:${asteroid.x}%; top:${asteroid.y}%; --size:${asteroid.size}px; --rot:${asteroid.rotation}deg; --spin:${asteroid.spin}s; --drift:${asteroid.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={asteroid.label}
+            >
+              <div class="asteroid-rotator">
+                <div
+                  class={`asteroid asteroid-shape-${(index % 4) + 1}`}
+                  style={`width:${asteroid.size}px; height:${asteroid.size}px;`}
+                ></div>
+                <span class="asteroid-label">{asteroid.label}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   </div>
 </Layout>
 
-<style>
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  .animate-fade-in {
-    animation: fade-in 0.8s ease-out;
-  }
-</style>

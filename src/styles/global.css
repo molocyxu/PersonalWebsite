@@ -115,6 +115,220 @@
   animation: star-sparkle 1s ease-out forwards;
 }
 
+/* Education asteroid field */
+.asteroid-field {
+  position: relative;
+  width: min(1500px, 100%);
+  height: min(78vh, 720px);
+  margin-top: 2rem;
+  border-radius: 24px;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.asteroid-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(160, 152, 138, 0.15), transparent 55%);
+  pointer-events: none;
+}
+
+.cluster-title {
+  position: absolute;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 18px rgba(160, 152, 138, 0.5);
+}
+
+.cluster-subtitle {
+  position: absolute;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.left-title {
+  left: 4%;
+  top: 5%;
+}
+
+.left-subtitle {
+  left: 6%;
+  top: 27%;
+}
+
+.mid-title {
+  left: 74%;
+  top: 4%;
+  transform: translateX(-50%);
+}
+
+.mid-subtitle {
+  left: 52%;
+  top: 25%;
+  transform: translateX(-50%);
+}
+
+.right-subtitle {
+  left: 90%;
+  top: 88%;
+  transform: translateX(-50%);
+}
+
+.mid-degree {
+  left: 74%;
+  top: 10%;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-align: center;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.asteroid-wrapper {
+  position: absolute;
+  z-index: 1;
+  animation: asteroid-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.asteroid-rotator {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  animation: asteroid-spin var(--spin) linear infinite;
+  will-change: transform;
+  z-index: 1;
+}
+
+.asteroid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+  clip-path: polygon(
+    8% 18%,
+    24% 6%,
+    46% 8%,
+    68% 12%,
+    88% 26%,
+    94% 48%,
+    88% 70%,
+    70% 86%,
+    46% 94%,
+    24% 88%,
+    10% 72%,
+    6% 46%
+  );
+  background:
+    radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.2), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(0, 0, 0, 0.32), transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(0, 0, 0, 0.28), transparent 55%),
+    linear-gradient(145deg, #b99b6b, #8b6d47);
+  background-blend-mode: screen, multiply, multiply, normal;
+  box-shadow: 0 0 8px rgba(185, 155, 107, 0.28);
+  filter: brightness(0.95);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  animation-delay: calc(var(--spin) * -0.1);
+  will-change: transform, filter;
+}
+
+.asteroid::after {
+  content: "";
+  position: absolute;
+  inset: 18% 20% 16% 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 35%, rgba(255, 255, 255, 0.1), transparent 52%);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.35);
+  opacity: 0.55;
+}
+
+.asteroid::before {
+  content: "";
+  position: absolute;
+  inset: 8% 10% 10% 8%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 42%, rgba(0, 0, 0, 0.25), transparent 45%),
+    radial-gradient(circle at 62% 30%, rgba(255, 255, 255, 0.08), transparent 38%);
+  opacity: 0.6;
+}
+
+.asteroid-shape-1 {
+  border-radius: 30% 70% 55% 45% / 50% 40% 60% 50%;
+  clip-path: polygon(6% 28%, 18% 8%, 40% 6%, 64% 14%, 86% 26%, 96% 50%, 84% 76%, 60% 92%, 36% 94%, 16% 78%, 6% 52%);
+}
+
+.asteroid-shape-2 {
+  border-radius: 10% 90% 35% 65% / 30% 60% 40% 70%;
+  clip-path: polygon(4% 20%, 20% 6%, 50% 2%, 74% 14%, 96% 30%, 92% 60%, 72% 84%, 46% 96%, 22% 88%, 8% 64%);
+}
+
+.asteroid-shape-3 {
+  border-radius: 60% 40% 25% 75% / 50% 70% 30% 50%;
+  clip-path: polygon(8% 10%, 34% 4%, 68% 12%, 92% 32%, 98% 54%, 86% 82%, 58% 96%, 28% 90%, 6% 60%);
+}
+
+.asteroid-shape-4 {
+  border-radius: 20% 80% 70% 30% / 35% 55% 45% 65%;
+  clip-path: polygon(6% 18%, 26% 6%, 54% 6%, 82% 18%, 98% 42%, 90% 70%, 64% 92%, 36% 96%, 10% 78%, 2% 50%);
+}
+
+.asteroid-label {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: -12px;
+  --label-scale: 0.95;
+  transform: translate(-50%, -100%) scale(var(--label-scale));
+  min-width: 140px;
+  max-width: 220px;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 12px rgba(160, 152, 138, 0.6);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.asteroid-wrapper:hover .asteroid,
+.asteroid-wrapper:focus-visible .asteroid {
+  filter: brightness(1.25);
+  box-shadow: 0 0 14px rgba(185, 155, 107, 0.7);
+}
+
+.asteroid-wrapper:hover .asteroid-label,
+.asteroid-wrapper:focus-visible .asteroid-label {
+  opacity: 1;
+  --label-scale: 1;
+}
+
+@keyframes asteroid-spin {
+  from {
+    transform: rotate(var(--rot));
+  }
+  to {
+    transform: rotate(calc(var(--rot) + 360deg));
+  }
+}
+
+@keyframes asteroid-drift {
+  0%,
+  100% {
+    margin-left: 0;
+  }
+  50% {
+    margin-left: var(--drift);
+  }
+}
+
 @keyframes star-sparkle {
   0% {
     opacity: 0;
