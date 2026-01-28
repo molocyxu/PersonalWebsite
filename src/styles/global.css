@@ -153,7 +153,7 @@
 
 .left-title {
   left: 4%;
-  top: 5%;
+  top: 8%;
 }
 
 .left-subtitle {
@@ -163,7 +163,7 @@
 
 .mid-title {
   left: 74%;
-  top: 4%;
+  top: 7%;
   transform: translateX(-50%);
 }
 
@@ -181,7 +181,7 @@
 
 .mid-degree {
   left: 74%;
-  top: 10%;
+  top: 13%;
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   line-height: 1.2;
@@ -308,6 +308,11 @@
 .asteroid-wrapper:focus-visible .asteroid-label {
   opacity: 1;
   --label-scale: 1;
+}
+
+.asteroid-wrapper:hover,
+.asteroid-wrapper:focus-visible {
+  z-index: 20;
 }
 
 @keyframes asteroid-spin {

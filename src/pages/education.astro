@@ -6,63 +6,64 @@ const planetColor = '#A0988A'; // Asteroid belt
 const planetColorRgb = '160, 152, 138';
 
 const planoWestCourses = [
-  'ap calculus bc',
-  'ap physics c: mechanics',
-  'ap physics c: e&m',
-  'ap computer science a',
-  'ap statistics',
-  'ap chemistry',
-  'ap biology',
-  'ap us history',
-  'ap world history',
-  'ap english language',
-  'ap english literature',
-  'ap macroeconomics',
-  'ap microeconomics',
-  'ap music theory',
-  'multivariable calculus',
-  'linear algebra',
-  'data structures',
-  'competitive programming',
-  'robotics systems',
-  'ai fundamentals',
-  'web systems',
+  { label: 'AP Music Theory', size: 'small' },
+  { label: 'AP English Language and Composition', size: 'small' },
+  { label: 'AP English Literature and Composition', size: 'small' },
+  { label: 'AP European History', size: 'small' },
+  { label: 'AP Human Geography', size: 'small' },
+  { label: 'AP Microeconomics', size: 'medium' },
+  { label: 'AP Macroeconomics', size: 'medium' },
+  { label: 'AP United States History', size: 'small' },
+  { label: 'AP World History: modern', size: 'small' },
+  { label: 'AP Statistics', size: 'large' },
+  { label: 'AP Computer Science A', size: 'large' },
+  { label: 'AP Calculus BC', size: 'large' },
+  { label: 'AP Chemistry', size: 'medium' },
+  { label: 'AP Environmental Science', size: 'medium' },
+  { label: 'AP Physics C: Electricity and Magnetism', size: 'medium' },
+  { label: 'AP Physics C: Mechanics', size: 'medium' },
+  { label: 'AP Chinese Language and Culture', size: 'medium' },
 ];
 
 const cmuCourses = [
-  '10-701 introduction to machine learning',
-  '15-213 introduction to computer systems',
-  '15-151 mathematical foundations',
-  '15-122 principles of imperative computation',
-  '15-150 principles of functional programming',
-  '15-210 parallel and sequential data structures',
-  '15-251 great ideas in theoretical cs',
-  '15-440 distributed systems',
-  '15-445 database systems',
-  '15-455 algorithms',
-  '15-462 computer graphics',
-  '15-465 animation',
-  '16-311 robotics',
-  '16-385 computer vision',
-  '21-127 concepts of mathematics',
-  '21-241 matrices and linear transformations',
-  '21-259 calculus in three dimensions',
-  '36-226 probability and statistics',
-  '76-101 interpretation and argument',
+  { label: '15122 principles of imperative computation', size: 'large' },
+  { label: '15151 mathematical foundations for computer science', size: 'large' },
+  { label: '21242 matrix theory', size: 'medium' },
+  { label: '21295 putnam seminar', size: 'medium' },
+  { label: '15150 principles of functional programming', size: 'medium' },
+  { label: '15251 great ideas in theoretical cs', size: 'large' },
+  { label: '15259 probability & computing', size: 'large' },
+  { label: '21269 vector analysis', size: 'medium' },
+  { label: '18213 computer systems', size: 'medium' },
+  { label: '10701 machine learning', size: 'large' },
+  { label: '11485 introduction to deep learning', size: 'large' },
+  { label: '15210 parallel and sequential data structures and algorithms', size: 'large' },
+  { label: '21301 combinatorics', size: 'medium' },
+  { label: '10403 deep reinforcement learning and control', size: 'large' },
+  { label: '10422 foundations of learning, game theory, and their connections', size: 'large' },
+  { label: '15195 competitive programming i', size: 'large' },
+  { label: '15445 database systems', size: 'medium' },
+  { label: '15451 algorithm design & analysis', size: 'large' },
+  { label: '15455 undergraduate complexity theory', size: 'medium' },
+  { label: '79189 history of democracy: thinking beyond the self', size: 'small' },
+  { label: '76107 writing about data', size: 'small' },
+  { label: '33104 experimental physics', size: 'small' },
+  { label: '76108 writing about public problems', size: 'small' },
+  { label: '82279 anime - visual interplay between japan and the world', size: 'small' },
+  { label: '88230 human intelligence and human stupidity', size: 'small' },
 ];
 
 const cmuActivities = [
-  'ml research assistant',
-  'robotics team',
-  'graphics lab',
-  'hci studio',
-  'teaching assistant',
-  'hackathons',
-  'open-source work',
-  'design projects',
-  'startup incubator',
-  'cybersecurity club',
-  'astronomy outreach',
+  { label: 'poker club', size: 'medium' },
+  { label: 'math club', size: 'large' },
+  { label: 'rec badminton club', size: 'small' },
+  { label: 'acm@cmu', size: 'large' },
+  { label: 'scottylabs', size: 'large' },
+  { label: 'data science club', size: 'large' },
+  { label: 'cubing club', size: 'medium' },
+  { label: 'quant club vice president', size: 'xl' },
+  { label: 'carnegie ai safety initiative', size: 'medium' },
+  { label: 'chess club', size: 'medium' },
 ];
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -76,7 +77,7 @@ const FIELD_WIDTH = 1500;
 const FIELD_HEIGHT = 720;
 
 const buildCluster = (
-  labels: string[],
+  items: Array<string | { label: string; size?: 'small' | 'medium' | 'large' | 'xl' }>,
   centerX: number,
   centerY: number,
   spreadX: number,
@@ -87,8 +88,19 @@ const buildCluster = (
   const placed: Array<{ x: number; y: number; size: number }> = [];
   const paddingPx = 6;
 
-  return labels.map((label, index) => {
-    const size = Math.round(14 + rand() * 18);
+  return items.map((item, index) => {
+    const label = typeof item === 'string' ? item : item.label;
+    const sizeHint = typeof item === 'string' ? undefined : item.size;
+    const size =
+      sizeHint === 'small'
+        ? Math.round(12 + rand() * 8)
+        : sizeHint === 'medium'
+          ? Math.round(20 + rand() * 8)
+          : sizeHint === 'large'
+            ? Math.round(30 + rand() * 10)
+            : sizeHint === 'xl'
+              ? Math.round(44 + rand() * 10)
+            : Math.round(12 + rand() * 28);
     let x = centerX;
     let y = centerY;
 
