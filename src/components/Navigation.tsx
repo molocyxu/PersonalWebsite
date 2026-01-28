@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { name: 'Timeline', path: '/gallery', planet: 'Venus' },
   { name: 'Socials', path: '/skills', planet: 'Mars' },
   { name: 'Resume', path: '/experience', planet: 'Jupiter' },
-  { name: 'Personal', path: '/placeholder', planet: 'Saturn' },
+  { name: 'Personal', path: '/saturn', planet: 'Saturn' },
 ];
 
 export default function Navigation() {

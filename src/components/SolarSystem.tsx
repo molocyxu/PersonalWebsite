@@ -52,8 +52,8 @@ const PLANETS = [
     distance: 15, 
     period: 4332.59,
     initialAngle: Math.PI / 6,
-    page: '/placeholder',
-    pageName: 'placeholder'
+    page: '/experience',
+    pageName: 'experience'
   },
   { 
     name: 'Saturn', 
@@ -62,8 +62,8 @@ const PLANETS = [
     distance: 19, 
     period: 10759.22,
     initialAngle: Math.PI / 5,
-    page: '/experience',
-    pageName: 'experience'
+    page: '/saturn',
+    pageName: 'saturn'
   },
   { 
     name: 'Uranus', 
