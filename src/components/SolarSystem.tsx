@@ -63,7 +63,7 @@ const PLANETS = [
     period: 10759.22,
     initialAngle: Math.PI / 5,
     page: '/saturn',
-    pageName: 'saturn'
+    pageName: 'saturn.'
   },
   { 
     name: 'Uranus', 

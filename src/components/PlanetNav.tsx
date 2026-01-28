@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { name: 'research', path: '/research', planet: 'Mars', color: '#C1440E', size: 0.5 },
   { name: 'education', path: '/education', planet: 'asteroid belt', color: '#A0988A', size: 0.45 },
   { name: 'experience', path: '/experience', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
-  { name: 'saturn', path: '/saturn', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
+  { name: 'saturn.', path: '/saturn', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
   { name: 'honors', path: '/honors', planet: 'Uranus', color: '#4FD0E7', size: 0.8 },
   { name: 'life', path: '/life', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
   { name: 'skills', path: '/skills', planet: 'kuiper belt', color: '#7AA6D6', size: 0.45 },
@@ -56,16 +56,16 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
           whileHover={{ scale: 1.3 }}
           transition={{ duration: 0.1, ease: 'easeOut' }}
           style={{
-            width: `${Math.max(20, (isActive ? item.size * 1.4 : item.size) * 20)}px`,
-            height: `${Math.max(20, (isActive ? item.size * 1.4 : item.size) * 20)}px`,
+            width: `${Math.max(22, (isActive ? item.size * (item.planet === 'Saturn' ? 1.8 : item.planet === 'Jupiter' ? 1.55 : 1.7) : item.size) * 20)}px`,
+            height: `${Math.max(22, (isActive ? item.size * (item.planet === 'Saturn' ? 1.8 : item.planet === 'Jupiter' ? 1.55 : 1.7) : item.size) * 20)}px`,
             minWidth: '20px',
             minHeight: '20px',
             backgroundColor: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet) ? 'transparent' : item.color,
             boxShadow: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet)
               ? 'none'
               : isActive
-                ? `0 0 20px ${item.color}, 0 0 40px ${item.color}40, inset 0 0 20px ${item.color}80`
-                : `0 0 10px ${item.color}40`,
+                ? `0 0 28px ${item.color}, 0 0 55px ${item.color}55, inset 0 0 28px ${item.color}90`
+                : `0 0 12px ${item.color}50`,
             filter: ['asteroid belt', 'kuiper belt', 'satellite'].includes(item.planet)
               ? 'none'
               : `brightness(${isActive ? 1.2 : 0.8})`,
@@ -134,7 +134,8 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   transform: 'translate(-50%, -50%) rotate(20deg)',
                   top: '50%',
                   left: '50%',
-                  opacity: isHovered ? 0.8 : 0.4,
+                  opacity: isActive ? 0.95 : isHovered ? 0.8 : 0.4,
+                  boxShadow: isActive ? '0 0 10px rgba(185, 155, 107, 0.9)' : 'none',
                 }}
               />
             </>
@@ -169,7 +170,8 @@ function PlanetNavItem({ item, index, isActive, scale }: { item: typeof NAV_ITEM
                   transform: 'translate(-50%, -50%) rotate(20deg)',
                   top: '50%',
                   left: '50%',
-                  opacity: isHovered ? 0.8 : 0.4,
+                  opacity: isActive ? 0.95 : isHovered ? 0.8 : 0.4,
+                  boxShadow: isActive ? '0 0 10px rgba(141, 185, 255, 0.9)' : 'none',
                 }}
               />
             </>
@@ -432,7 +434,8 @@ export default function PlanetNav() {
         <div className="relative flex items-center justify-center gap-4 md:gap-8 lg:gap-12 flex-wrap">
           {NAV_ITEMS.map((item, index) => {
             const isActive = currentPath === item.path;
-            const scale = isActive ? 1.4 : 1;
+            const activeScale = item.planet === 'Saturn' ? 1.7 : item.planet === 'Jupiter' ? 1.5 : 1.6;
+            const scale = isActive ? activeScale : 1;
             
             return (
               <PlanetNavItem

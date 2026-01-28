@@ -8,7 +8,7 @@ const PAGES = [
   { path: '/research', name: 'research' },
   { path: '/education', name: 'education' },
   { path: '/experience', name: 'experience' },
-  { path: '/saturn', name: 'saturn' },
+  { path: '/saturn', name: 'saturn.' },
   { path: '/honors', name: 'honors' },
   { path: '/life', name: 'life' },
   { path: '/skills', name: 'skills' },
