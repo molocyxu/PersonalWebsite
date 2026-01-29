@@ -6,47 +6,67 @@ const planetColor = '#7AA6D6'; // Kuiper belt
 const planetColorRgb = '122, 166, 214';
 
 const languages = [
-  { label: 'Python', size: 'large' },
-  { label: 'C++', size: 'medium' },
-  { label: 'Java', size: 'medium' },
-  { label: 'JavaScript', size: 'large' },
-  { label: 'TypeScript', size: 'large' },
-  { label: 'Go', size: 'small' },
-  { label: 'Rust', size: 'small' },
-  { label: 'SQL', size: 'medium' },
+  { label: 'java (oracle certified)', size: 'large' },
+  { label: 'python', size: 'large' },
+  { label: 'c', size: 'large' },
+  { label: 'c++', size: 'large' },
+  { label: 'sml', size: 'medium' },
+  { label: 'typescript', size: 'medium' },
+  { label: 'javascript', size: 'medium' },
+  { label: 'sql', size: 'medium' },
+  { label: 'html', size: 'medium' },
+  { label: 'css', size: 'medium' },
+  { label: 'solidity', size: 'small' },
 ];
 
 const aiMl = [
-  { label: 'PyTorch', size: 'large' },
-  { label: 'TensorFlow', size: 'medium' },
-  { label: 'scikit-learn', size: 'medium' },
-  { label: 'NumPy', size: 'medium' },
-  { label: 'Pandas', size: 'medium' },
-  { label: 'Hugging Face', size: 'large' },
-  { label: 'JAX', size: 'small' },
-  { label: 'OpenAI API', size: 'small' },
+  { label: 'pytorch', size: 'large' },
+  { label: 'tensorflow', size: 'large' },
+  { label: 'scikit-learn', size: 'large' },
+  { label: 'hugging face', size: 'medium' },
+  { label: 'gradio', size: 'small' },
+  { label: 'apache spark', size: 'medium' },
+  { label: 'wandb', size: 'medium' },
+  { label: 'opencv', size: 'large' },
+  { label: 'google colab', size: 'medium' },
+  { label: 'jupyter notebook', size: 'medium' },
+  { label: 'whisper', size: 'small' },
+  { label: 'word2vec', size: 'small' },
+  { label: 'claude api', size: 'medium' },
 ];
 
 const web = [
-  { label: 'React', size: 'large' },
-  { label: 'Next.js', size: 'medium' },
-  { label: 'Astro', size: 'medium' },
-  { label: 'Tailwind', size: 'medium' },
-  { label: 'Node.js', size: 'large' },
-  { label: 'Express', size: 'small' },
-  { label: 'Three.js', size: 'medium' },
-  { label: 'Vite', size: 'small' },
+  { label: 'react', size: 'large' },
+  { label: 'angular.js', size: 'small' },
+  { label: 'astro', size: 'small' },
+  { label: 'node.js', size: 'large' },
+  { label: 'flask', size: 'large' },
+  { label: 'django', size: 'medium' },
+  { label: 'mongodb', size: 'medium' },
+  { label: 'postgresql', size: 'large' },
+  { label: 'railway', size: 'medium' },
+  { label: 'heroku', size: 'small' },
+  { label: 'vercel', size: 'large' },
+  { label: 'stripe', size: 'medium' },
+  { label: 'github pages', size: 'medium' },
+  { label: 'rest api', size: 'medium' },
+  { label: 'indexeddb', size: 'small' },
 ];
 
 const miscellaneous = [
-  { label: 'Git', size: 'large' },
-  { label: 'Docker', size: 'medium' },
-  { label: 'Linux', size: 'medium' },
-  { label: 'AWS', size: 'medium' },
-  { label: 'PostgreSQL', size: 'medium' },
-  { label: 'Redis', size: 'small' },
-  { label: 'CI/CD', size: 'small' },
-  { label: 'Figma', size: 'small' },
+  { label: 'aws', size: 'large' },
+  { label: 'google cloud', size: 'medium' },
+  { label: 'docker', size: 'large' },
+  { label: 'kubernetes', size: 'large' },
+  { label: 'redis', size: 'medium' },
+  { label: 'git', size: 'large' },
+  { label: 'github', size: 'large' },
+  { label: 'linux', size: 'medium' },
+  { label: 'unix', size: 'small' },
+  { label: 'android studio', size: 'medium' },
+  { label: 'figma', size: 'small' },
+  { label: 'latex', size: 'small' },
+  { label: 'cursor', size: 'medium' },
 ];
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -113,6 +133,11 @@ const buildCluster = (
     const rotation = Math.round(rand() * 360);
     const spin = (12 + rand() * 18).toFixed(2);
     const drift = (rand() * 4 - 2).toFixed(2);
+    const ellipseX = Math.round(6 + rand() * 12);
+    const ellipseY = Math.round(16 + rand() * 18);
+    const ellipseTilt = Math.round(rand() * 20 - 10);
+    const ellipseDuration = (16 + rand() * 18).toFixed(2);
+    const ellipsePhase = `-${Math.round(rand() * 80)}s`;
 
     return {
       id: `${label}-${index}`,
@@ -123,14 +148,19 @@ const buildCluster = (
       rotation,
       spin,
       drift,
+      ellipseX,
+      ellipseY,
+      ellipseTilt,
+      ellipseDuration,
+      ellipsePhase,
     };
   });
 };
 
-const languageComets = buildCluster(languages, 14, 56, 14, 18, 1);
-const aiMlComets = buildCluster(aiMl, 42, 38, 16, 18, 2);
-const webComets = buildCluster(web, 68, 50, 16, 20, 3);
-const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
+const languageComets = buildCluster(languages, 14, 46, 9, 16, 1);
+const aiMlComets = buildCluster(aiMl, 40, 34, 10, 16, 2);
+const webComets = buildCluster(web, 68, 54, 11, 18, 3);
+const miscComets = buildCluster(miscellaneous, 90, 66, 8, 14, 4);
 ---
 
 <Layout title="skills">
@@ -149,8 +179,8 @@ const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
           <div class="comet-field">
           <div class="comet-title comet-languages">languages</div>
           <div class="comet-title comet-aiml">ai / ml</div>
-          <div class="comet-title comet-web">web</div>
-          <div class="comet-title comet-misc">miscellaneous</div>
+          <div class="comet-title comet-web">web dev</div>
+          <div class="comet-title comet-misc">misc.</div>
 
           {languageComets.map((comet, index) => (
             <div
@@ -160,12 +190,19 @@ const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
               tabindex="0"
               aria-label={comet.label}
             >
-              <div class="comet-rotator">
+              <div class="comet-ellipse-tilt" style={`--ellipse-tilt:${comet.ellipseTilt}deg;`}>
                 <div
-                  class={`comet comet-shape-${(index % 4) + 1}`}
-                  style={`width:${comet.size}px; height:${comet.size}px;`}
-                ></div>
-                <span class="comet-label">{comet.label}</span>
+                  class="comet-ellipse"
+                  style={`--ellipse-x:${comet.ellipseX}px; --ellipse-y:${comet.ellipseY}px; --ellipse-duration:${comet.ellipseDuration}s; --ellipse-phase:${comet.ellipsePhase};`}
+                >
+                  <div class="comet-rotator">
+                    <div
+                      class={`comet comet-shape-${(index % 4) + 1}`}
+                      style={`width:${comet.size}px; height:${comet.size}px;`}
+                    ></div>
+                    <span class="comet-label">{comet.label}</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -178,12 +215,19 @@ const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
               tabindex="0"
               aria-label={comet.label}
             >
-              <div class="comet-rotator">
+              <div class="comet-ellipse-tilt" style={`--ellipse-tilt:${comet.ellipseTilt}deg;`}>
                 <div
-                  class={`comet comet-shape-${(index % 4) + 1}`}
-                  style={`width:${comet.size}px; height:${comet.size}px;`}
-                ></div>
-                <span class="comet-label">{comet.label}</span>
+                  class="comet-ellipse"
+                  style={`--ellipse-x:${comet.ellipseX}px; --ellipse-y:${comet.ellipseY}px; --ellipse-duration:${comet.ellipseDuration}s; --ellipse-phase:${comet.ellipsePhase};`}
+                >
+                  <div class="comet-rotator">
+                    <div
+                      class={`comet comet-shape-${(index % 4) + 1}`}
+                      style={`width:${comet.size}px; height:${comet.size}px;`}
+                    ></div>
+                    <span class="comet-label">{comet.label}</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -196,12 +240,19 @@ const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
               tabindex="0"
               aria-label={comet.label}
             >
-              <div class="comet-rotator">
+              <div class="comet-ellipse-tilt" style={`--ellipse-tilt:${comet.ellipseTilt}deg;`}>
                 <div
-                  class={`comet comet-shape-${(index % 4) + 1}`}
-                  style={`width:${comet.size}px; height:${comet.size}px;`}
-                ></div>
-                <span class="comet-label">{comet.label}</span>
+                  class="comet-ellipse"
+                  style={`--ellipse-x:${comet.ellipseX}px; --ellipse-y:${comet.ellipseY}px; --ellipse-duration:${comet.ellipseDuration}s; --ellipse-phase:${comet.ellipsePhase};`}
+                >
+                  <div class="comet-rotator">
+                    <div
+                      class={`comet comet-shape-${(index % 4) + 1}`}
+                      style={`width:${comet.size}px; height:${comet.size}px;`}
+                    ></div>
+                    <span class="comet-label">{comet.label}</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -214,12 +265,19 @@ const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
               tabindex="0"
               aria-label={comet.label}
             >
-              <div class="comet-rotator">
+              <div class="comet-ellipse-tilt" style={`--ellipse-tilt:${comet.ellipseTilt}deg;`}>
                 <div
-                  class={`comet comet-shape-${(index % 4) + 1}`}
-                  style={`width:${comet.size}px; height:${comet.size}px;`}
-                ></div>
-                <span class="comet-label">{comet.label}</span>
+                  class="comet-ellipse"
+                  style={`--ellipse-x:${comet.ellipseX}px; --ellipse-y:${comet.ellipseY}px; --ellipse-duration:${comet.ellipseDuration}s; --ellipse-phase:${comet.ellipsePhase};`}
+                >
+                  <div class="comet-rotator">
+                    <div
+                      class={`comet comet-shape-${(index % 4) + 1}`}
+                      style={`width:${comet.size}px; height:${comet.size}px;`}
+                    ></div>
+                    <span class="comet-label">{comet.label}</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

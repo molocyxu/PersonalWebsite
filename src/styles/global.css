@@ -123,7 +123,7 @@
   margin-top: 1rem;
   border-radius: 24px;
   overflow: visible;
-  contain: layout paint;
+  contain: layout;
 }
 
 .cluster-title {
@@ -143,14 +143,15 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+
 .left-title {
-  left: 4%;
-  top: 8%;
+  left: 6%;
+  top: 7%;
 }
 
 .left-subtitle {
-  left: 6%;
-  top: 30%;
+  left: 9%;
+  top: 22%;
 }
 
 .mid-title {
@@ -161,13 +162,13 @@
 
 .mid-subtitle {
   left: 52%;
-  top: 23%;
+  top: 29%;
   transform: translateX(-50%);
 }
 
 .right-subtitle {
   left: 90%;
-  top: 50%;
+  top: 46%;
   transform: translateX(-50%);
 }
 
@@ -186,6 +187,20 @@
   position: absolute;
   z-index: 1;
   animation: asteroid-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.asteroid-ellipse-tilt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(var(--ellipse-tilt));
+  will-change: transform;
+}
+
+.asteroid-ellipse {
+  animation: asteroid-ellipse var(--ellipse-duration) linear infinite;
+  animation-delay: var(--ellipse-phase);
   will-change: transform;
 }
 
@@ -252,23 +267,23 @@
 }
 
 .asteroid-shape-1 {
-  border-radius: 30% 70% 55% 45% / 50% 40% 60% 50%;
-  clip-path: polygon(6% 28%, 18% 8%, 40% 6%, 64% 14%, 86% 26%, 96% 50%, 84% 76%, 60% 92%, 36% 94%, 16% 78%, 6% 52%);
+  border-radius: 20% 80% 40% 60% / 55% 35% 65% 45%;
+  clip-path: polygon(4% 18%, 22% 6%, 44% 8%, 70% 14%, 92% 34%, 96% 58%, 82% 82%, 54% 96%, 26% 88%, 8% 62%);
 }
 
 .asteroid-shape-2 {
-  border-radius: 10% 90% 35% 65% / 30% 60% 40% 70%;
-  clip-path: polygon(4% 20%, 20% 6%, 50% 2%, 74% 14%, 96% 30%, 92% 60%, 72% 84%, 46% 96%, 22% 88%, 8% 64%);
+  border-radius: 60% 40% 15% 85% / 25% 65% 35% 75%;
+  clip-path: polygon(8% 34%, 18% 10%, 46% 2%, 72% 12%, 96% 30%, 88% 56%, 66% 86%, 38% 98%, 14% 82%, 2% 56%);
 }
 
 .asteroid-shape-3 {
-  border-radius: 60% 40% 25% 75% / 50% 70% 30% 50%;
-  clip-path: polygon(8% 10%, 34% 4%, 68% 12%, 92% 32%, 98% 54%, 86% 82%, 58% 96%, 28% 90%, 6% 60%);
+  border-radius: 75% 25% 65% 35% / 45% 70% 30% 55%;
+  clip-path: polygon(12% 6%, 36% 2%, 68% 10%, 92% 28%, 98% 52%, 90% 76%, 62% 96%, 30% 92%, 8% 66%);
 }
 
 .asteroid-shape-4 {
-  border-radius: 20% 80% 70% 30% / 35% 55% 45% 65%;
-  clip-path: polygon(6% 18%, 26% 6%, 54% 6%, 82% 18%, 98% 42%, 90% 70%, 64% 92%, 36% 96%, 10% 78%, 2% 50%);
+  border-radius: 5% 95% 80% 20% / 20% 60% 40% 80%;
+  clip-path: polygon(2% 22%, 18% 4%, 52% 2%, 86% 16%, 98% 44%, 92% 76%, 58% 98%, 24% 96%, 6% 72%);
 }
 
 .asteroid-label {
@@ -315,14 +330,16 @@
   margin-top: 1rem;
   border-radius: 24px;
   overflow: visible;
-  contain: layout paint;
+  contain: layout;
 }
 
 .belt-field-wrap {
   position: relative;
-  width: min(1500px, 100%);
+  width: min(1600px, calc(100% + 6rem));
   height: min(90vh, 900px);
   margin-top: 0.5rem;
+  margin-left: -3rem;
+  margin-right: -3rem;
   overflow: visible;
 }
 
@@ -345,7 +362,7 @@
 }
 
 .belt-field-shift {
-  margin-top: -1.25rem;
+  margin-top: -2.25rem;
 }
 
 .comet-title {
@@ -357,30 +374,45 @@
   text-shadow: 0 0 18px rgba(122, 166, 214, 0.6);
 }
 
+
 .comet-languages {
-  left: 6%;
-  top: 12%;
+  left: 11%;
+  top: 20%;
 }
 
 .comet-aiml {
-  left: 32%;
+  left: 38%;
   top: 8%;
 }
 
 .comet-web {
-  left: 58%;
-  top: 12%;
+  left: 64%;
+  top: 28%;
 }
 
 .comet-misc {
-  left: 80%;
-  top: 68%;
+  left: 89%;
+  top: 42%;
 }
 
 .comet-wrapper {
   position: absolute;
   z-index: 1;
   animation: asteroid-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.comet-ellipse-tilt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(var(--ellipse-tilt));
+  will-change: transform;
+}
+
+.comet-ellipse {
+  animation: asteroid-ellipse var(--ellipse-duration) linear infinite;
+  animation-delay: var(--ellipse-phase);
   will-change: transform;
 }
 
@@ -444,23 +476,23 @@
 }
 
 .comet-shape-1 {
-  border-radius: 45% 55% 35% 65%;
-  clip-path: polygon(10% 20%, 28% 6%, 52% 10%, 74% 18%, 92% 36%, 94% 58%, 80% 80%, 54% 92%, 24% 86%, 8% 62%);
+  border-radius: 70% 30% 50% 50%;
+  clip-path: polygon(6% 18%, 22% 6%, 48% 4%, 74% 12%, 94% 32%, 98% 56%, 84% 80%, 58% 94%, 30% 90%, 10% 66%);
 }
 
 .comet-shape-2 {
-  border-radius: 60% 40% 55% 45%;
-  clip-path: polygon(6% 26%, 22% 8%, 46% 6%, 70% 16%, 90% 34%, 98% 54%, 84% 78%, 58% 92%, 30% 90%, 10% 70%);
+  border-radius: 25% 75% 35% 65%;
+  clip-path: polygon(2% 30%, 16% 8%, 40% 2%, 68% 10%, 92% 28%, 96% 52%, 80% 78%, 52% 94%, 22% 88%, 6% 62%);
 }
 
 .comet-shape-3 {
-  border-radius: 35% 65% 50% 50%;
-  clip-path: polygon(12% 12%, 34% 4%, 62% 10%, 84% 26%, 96% 50%, 90% 74%, 66% 90%, 36% 96%, 16% 78%, 6% 52%);
+  border-radius: 55% 45% 20% 80%;
+  clip-path: polygon(10% 10%, 30% 2%, 60% 6%, 86% 24%, 98% 50%, 88% 78%, 62% 96%, 32% 92%, 8% 68%);
 }
 
 .comet-shape-4 {
-  border-radius: 55% 45% 65% 35%;
-  clip-path: polygon(8% 18%, 24% 6%, 50% 8%, 74% 20%, 92% 40%, 96% 60%, 82% 82%, 56% 94%, 28% 88%, 10% 68%);
+  border-radius: 10% 90% 60% 40%;
+  clip-path: polygon(4% 22%, 18% 4%, 46% 2%, 74% 14%, 96% 40%, 92% 70%, 66% 94%, 34% 98%, 8% 78%);
 }
 
 .comet-label {
@@ -505,6 +537,36 @@
   }
   to {
     transform: rotate(calc(var(--rot) + 360deg));
+  }
+}
+
+@keyframes asteroid-ellipse {
+  0% {
+    transform: translate(var(--ellipse-x), 0);
+  }
+  12.5% {
+    transform: translate(calc(var(--ellipse-x) * 0.7), calc(var(--ellipse-y) * 0.7));
+  }
+  25% {
+    transform: translate(0, var(--ellipse-y));
+  }
+  37.5% {
+    transform: translate(calc(var(--ellipse-x) * -0.7), calc(var(--ellipse-y) * 0.7));
+  }
+  50% {
+    transform: translate(calc(var(--ellipse-x) * -1), 0);
+  }
+  62.5% {
+    transform: translate(calc(var(--ellipse-x) * -0.7), calc(var(--ellipse-y) * -0.7));
+  }
+  75% {
+    transform: translate(0, calc(var(--ellipse-y) * -1));
+  }
+  87.5% {
+    transform: translate(calc(var(--ellipse-x) * 0.7), calc(var(--ellipse-y) * -0.7));
+  }
+  100% {
+    transform: translate(var(--ellipse-x), 0);
   }
 }
 
