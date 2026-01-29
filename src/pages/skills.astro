@@ -4,6 +4,133 @@ import MagicalText from '../components/MagicalText';
 
 const planetColor = '#7AA6D6'; // Kuiper belt
 const planetColorRgb = '122, 166, 214';
+
+const languages = [
+  { label: 'Python', size: 'large' },
+  { label: 'C++', size: 'medium' },
+  { label: 'Java', size: 'medium' },
+  { label: 'JavaScript', size: 'large' },
+  { label: 'TypeScript', size: 'large' },
+  { label: 'Go', size: 'small' },
+  { label: 'Rust', size: 'small' },
+  { label: 'SQL', size: 'medium' },
+];
+
+const aiMl = [
+  { label: 'PyTorch', size: 'large' },
+  { label: 'TensorFlow', size: 'medium' },
+  { label: 'scikit-learn', size: 'medium' },
+  { label: 'NumPy', size: 'medium' },
+  { label: 'Pandas', size: 'medium' },
+  { label: 'Hugging Face', size: 'large' },
+  { label: 'JAX', size: 'small' },
+  { label: 'OpenAI API', size: 'small' },
+];
+
+const web = [
+  { label: 'React', size: 'large' },
+  { label: 'Next.js', size: 'medium' },
+  { label: 'Astro', size: 'medium' },
+  { label: 'Tailwind', size: 'medium' },
+  { label: 'Node.js', size: 'large' },
+  { label: 'Express', size: 'small' },
+  { label: 'Three.js', size: 'medium' },
+  { label: 'Vite', size: 'small' },
+];
+
+const miscellaneous = [
+  { label: 'Git', size: 'large' },
+  { label: 'Docker', size: 'medium' },
+  { label: 'Linux', size: 'medium' },
+  { label: 'AWS', size: 'medium' },
+  { label: 'PostgreSQL', size: 'medium' },
+  { label: 'Redis', size: 'small' },
+  { label: 'CI/CD', size: 'small' },
+  { label: 'Figma', size: 'small' },
+];
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+const seededRandom = (seed: number) => () => {
+  seed = (seed * 9301 + 49297) % 233280;
+  return seed / 233280;
+};
+
+const FIELD_WIDTH = 1500;
+const FIELD_HEIGHT = 720;
+
+const buildCluster = (
+  items: Array<string | { label: string; size?: 'small' | 'medium' | 'large' | 'xl' }>,
+  centerX: number,
+  centerY: number,
+  spreadX: number,
+  spreadY: number,
+  seedOffset: number,
+) => {
+  const rand = seededRandom(401 + seedOffset);
+  const placed: Array<{ x: number; y: number; size: number }> = [];
+  const paddingPx = 6;
+
+  return items.map((item, index) => {
+    const label = typeof item === 'string' ? item : item.label;
+    const sizeHint = typeof item === 'string' ? undefined : item.size;
+    const size =
+      sizeHint === 'small'
+        ? Math.round(12 + rand() * 8)
+        : sizeHint === 'medium'
+          ? Math.round(20 + rand() * 8)
+          : sizeHint === 'large'
+            ? Math.round(28 + rand() * 12)
+            : sizeHint === 'xl'
+              ? Math.round(40 + rand() * 10)
+              : Math.round(14 + rand() * 26);
+    let x = centerX;
+    let y = centerY;
+
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      const angle = rand() * Math.PI * 2;
+      const radiusX = (rand() ** 0.6) * spreadX;
+      const radiusY = (rand() ** 0.6) * spreadY;
+      const nextX = clamp(centerX + Math.cos(angle) * radiusX, 4, 96);
+      const nextY = clamp(centerY + Math.sin(angle) * radiusY, 16, 92);
+
+      const hasOverlap = placed.some(({ x: otherX, y: otherY, size: otherSize }) => {
+        const dxPx = ((nextX - otherX) / 100) * FIELD_WIDTH;
+        const dyPx = ((nextY - otherY) / 100) * FIELD_HEIGHT;
+        const minDistance = (size + otherSize) * 0.5 + paddingPx;
+        return Math.hypot(dxPx, dyPx) < minDistance;
+      });
+
+      if (!hasOverlap) {
+        x = nextX;
+        y = nextY;
+        break;
+      }
+    }
+
+    placed.push({ x, y, size });
+
+    const rotation = Math.round(rand() * 360);
+    const spin = (12 + rand() * 18).toFixed(2);
+    const drift = (rand() * 4 - 2).toFixed(2);
+
+    return {
+      id: `${label}-${index}`,
+      label,
+      x,
+      y,
+      size,
+      rotation,
+      spin,
+      drift,
+    };
+  });
+};
+
+const languageComets = buildCluster(languages, 14, 56, 14, 18, 1);
+const aiMlComets = buildCluster(aiMl, 42, 38, 16, 18, 2);
+const webComets = buildCluster(web, 68, 50, 16, 20, 3);
+const miscComets = buildCluster(miscellaneous, 90, 68, 12, 16, 4);
 ---
 
 <Layout title="skills">
@@ -12,16 +139,91 @@ const planetColorRgb = '122, 166, 214';
     <div class="absolute inset-0 page-starfield"></div>
     <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
       <div class="max-w-6xl animate-fade-in">
-        <div class="border-l-4 pl-6 mb-8" style={`border-color: rgba(${planetColorRgb}, 0.4);`}>
+        <div class="inline-block border-l-4 pl-6 mb-8" style={`border-color: rgba(${planetColorRgb}, 0.4);`}>
           <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
             <MagicalText text="skills" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style={`background: linear-gradient(to right, rgba(${planetColorRgb}, 0.6), transparent);`}></div>
         </div>
-        <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style={`border-color: rgba(${planetColorRgb}, 0.15);`}>
-          <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-            This page will showcase my skills. Content coming soon.
-          </p>
+        <div class="belt-field-wrap belt-comet-wrap belt-field-shift">
+          <div class="comet-field">
+          <div class="comet-title comet-languages">languages</div>
+          <div class="comet-title comet-aiml">ai / ml</div>
+          <div class="comet-title comet-web">web</div>
+          <div class="comet-title comet-misc">miscellaneous</div>
+
+          {languageComets.map((comet, index) => (
+            <div
+              key={comet.id}
+              class="comet-wrapper"
+              style={`left:${comet.x}%; top:${comet.y}%; --size:${comet.size}px; --rot:${comet.rotation}deg; --spin:${comet.spin}s; --drift:${comet.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={comet.label}
+            >
+              <div class="comet-rotator">
+                <div
+                  class={`comet comet-shape-${(index % 4) + 1}`}
+                  style={`width:${comet.size}px; height:${comet.size}px;`}
+                ></div>
+                <span class="comet-label">{comet.label}</span>
+              </div>
+            </div>
+          ))}
+
+          {aiMlComets.map((comet, index) => (
+            <div
+              key={comet.id}
+              class="comet-wrapper"
+              style={`left:${comet.x}%; top:${comet.y}%; --size:${comet.size}px; --rot:${comet.rotation}deg; --spin:${comet.spin}s; --drift:${comet.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={comet.label}
+            >
+              <div class="comet-rotator">
+                <div
+                  class={`comet comet-shape-${(index % 4) + 1}`}
+                  style={`width:${comet.size}px; height:${comet.size}px;`}
+                ></div>
+                <span class="comet-label">{comet.label}</span>
+              </div>
+            </div>
+          ))}
+
+          {webComets.map((comet, index) => (
+            <div
+              key={comet.id}
+              class="comet-wrapper"
+              style={`left:${comet.x}%; top:${comet.y}%; --size:${comet.size}px; --rot:${comet.rotation}deg; --spin:${comet.spin}s; --drift:${comet.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={comet.label}
+            >
+              <div class="comet-rotator">
+                <div
+                  class={`comet comet-shape-${(index % 4) + 1}`}
+                  style={`width:${comet.size}px; height:${comet.size}px;`}
+                ></div>
+                <span class="comet-label">{comet.label}</span>
+              </div>
+            </div>
+          ))}
+
+          {miscComets.map((comet, index) => (
+            <div
+              key={comet.id}
+              class="comet-wrapper"
+              style={`left:${comet.x}%; top:${comet.y}%; --size:${comet.size}px; --rot:${comet.rotation}deg; --spin:${comet.spin}s; --drift:${comet.drift}px; transform: translate(-50%, -50%);`}
+              tabindex="0"
+              aria-label={comet.label}
+            >
+              <div class="comet-rotator">
+                <div
+                  class={`comet comet-shape-${(index % 4) + 1}`}
+                  style={`width:${comet.size}px; height:${comet.size}px;`}
+                ></div>
+                <span class="comet-label">{comet.label}</span>
+              </div>
+            </div>
+          ))}
+          </div>
         </div>
       </div>
     </div>

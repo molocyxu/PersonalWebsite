@@ -119,19 +119,11 @@
 .asteroid-field {
   position: relative;
   width: min(1500px, 100%);
-  height: min(78vh, 720px);
-  margin-top: 2rem;
+  height: min(86vh, 860px);
+  margin-top: 1rem;
   border-radius: 24px;
-  overflow: hidden;
+  overflow: visible;
   contain: layout paint;
-}
-
-.asteroid-field::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 30%, rgba(160, 152, 138, 0.15), transparent 55%);
-  pointer-events: none;
 }
 
 .cluster-title {
@@ -158,7 +150,7 @@
 
 .left-subtitle {
   left: 6%;
-  top: 27%;
+  top: 30%;
 }
 
 .mid-title {
@@ -169,13 +161,13 @@
 
 .mid-subtitle {
   left: 52%;
-  top: 25%;
+  top: 23%;
   transform: translateX(-50%);
 }
 
 .right-subtitle {
   left: 90%;
-  top: 88%;
+  top: 50%;
   transform: translateX(-50%);
 }
 
@@ -312,6 +304,198 @@
 
 .asteroid-wrapper:hover,
 .asteroid-wrapper:focus-visible {
+  z-index: 20;
+}
+
+/* Skills comet field */
+.comet-field {
+  position: relative;
+  width: min(1500px, 100%);
+  height: min(86vh, 860px);
+  margin-top: 1rem;
+  border-radius: 24px;
+  overflow: visible;
+  contain: layout paint;
+}
+
+.belt-field-wrap {
+  position: relative;
+  width: min(1500px, 100%);
+  height: min(90vh, 900px);
+  margin-top: 0.5rem;
+  overflow: visible;
+}
+
+.belt-asteroid-wrap::before,
+.belt-comet-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -4% -6% -6%;
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.belt-asteroid-wrap::before {
+  background: radial-gradient(circle at 60% 50%, rgba(160, 152, 138, 0.22), transparent 62%);
+}
+
+.belt-comet-wrap::before {
+  background: radial-gradient(circle at 40% 50%, rgba(122, 166, 214, 0.24), transparent 62%);
+}
+
+.belt-field-shift {
+  margin-top: -1.25rem;
+}
+
+.comet-title {
+  position: absolute;
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 18px rgba(122, 166, 214, 0.6);
+}
+
+.comet-languages {
+  left: 6%;
+  top: 12%;
+}
+
+.comet-aiml {
+  left: 32%;
+  top: 8%;
+}
+
+.comet-web {
+  left: 58%;
+  top: 12%;
+}
+
+.comet-misc {
+  left: 80%;
+  top: 68%;
+}
+
+.comet-wrapper {
+  position: absolute;
+  z-index: 1;
+  animation: asteroid-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.comet-rotator {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  animation: asteroid-spin var(--spin) linear infinite;
+  will-change: transform;
+  z-index: 1;
+}
+
+.comet {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50% 60% 40% 55%;
+  background:
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.55), transparent 45%),
+    radial-gradient(circle at 70% 65%, rgba(40, 80, 120, 0.4), transparent 55%),
+    linear-gradient(145deg, #cfe6ff, #7aa6d6);
+  box-shadow: 0 0 12px rgba(140, 190, 255, 0.6);
+  filter: brightness(0.95);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  animation-delay: calc(var(--spin) * -0.1);
+  will-change: transform, filter;
+}
+
+.comet::before {
+  content: "";
+  position: absolute;
+  inset: 20% 18% 22% 16%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 40%, rgba(255, 255, 255, 0.5), transparent 55%),
+    radial-gradient(circle at 70% 60%, rgba(160, 210, 255, 0.35), transparent 60%);
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.comet::after {
+  content: "";
+  position: absolute;
+  left: 55%;
+  top: 50%;
+  width: calc(var(--size) * 2.2);
+  height: calc(var(--size) * 0.6);
+  transform: translate(0, -50%) rotate(10deg);
+  transform-origin: left center;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(170, 215, 255, 0.25) 35%,
+    rgba(140, 200, 255, 0.6) 70%,
+    rgba(255, 255, 255, 0.9)
+  );
+  filter: blur(1.2px);
+  opacity: 0.75;
+  z-index: 0;
+}
+
+.comet-shape-1 {
+  border-radius: 45% 55% 35% 65%;
+  clip-path: polygon(10% 20%, 28% 6%, 52% 10%, 74% 18%, 92% 36%, 94% 58%, 80% 80%, 54% 92%, 24% 86%, 8% 62%);
+}
+
+.comet-shape-2 {
+  border-radius: 60% 40% 55% 45%;
+  clip-path: polygon(6% 26%, 22% 8%, 46% 6%, 70% 16%, 90% 34%, 98% 54%, 84% 78%, 58% 92%, 30% 90%, 10% 70%);
+}
+
+.comet-shape-3 {
+  border-radius: 35% 65% 50% 50%;
+  clip-path: polygon(12% 12%, 34% 4%, 62% 10%, 84% 26%, 96% 50%, 90% 74%, 66% 90%, 36% 96%, 16% 78%, 6% 52%);
+}
+
+.comet-shape-4 {
+  border-radius: 55% 45% 65% 35%;
+  clip-path: polygon(8% 18%, 24% 6%, 50% 8%, 74% 20%, 92% 40%, 96% 60%, 82% 82%, 56% 94%, 28% 88%, 10% 68%);
+}
+
+.comet-label {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: -14px;
+  --label-scale: 0.95;
+  transform: translate(-50%, -100%) scale(var(--label-scale));
+  min-width: 120px;
+  max-width: 220px;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(235, 248, 255, 0.9);
+  text-shadow: 0 0 12px rgba(140, 200, 255, 0.7);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.comet-wrapper:hover .comet,
+.comet-wrapper:focus-visible .comet {
+  filter: brightness(1.2);
+  box-shadow: 0 0 18px rgba(170, 220, 255, 0.85);
+}
+
+.comet-wrapper:hover .comet-label,
+.comet-wrapper:focus-visible .comet-label {
+  opacity: 1;
+  --label-scale: 1;
+}
+
+.comet-wrapper:hover,
+.comet-wrapper:focus-visible {
   z-index: 20;
 }
 
