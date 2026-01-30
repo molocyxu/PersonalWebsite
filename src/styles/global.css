@@ -145,12 +145,12 @@
 
 
 .left-title {
-  left: 6%;
+  left: 8%;
   top: 7%;
 }
 
 .left-subtitle {
-  left: 9%;
+  left: 10%;
   top: 22%;
 }
 
@@ -808,6 +808,175 @@ html {
 .panorama-pane .pane-content {
   position: relative;
   min-height: 100%;
+}
+
+/* Saturn page scene */
+.saturn-scene {
+  position: absolute;
+  left: 50vw;
+  top: 56vh;
+  width: 220vw;
+  height: 150vh;
+  transform: translate3d(calc(-50% + var(--saturn-shift, 0px)), -50%, 0);
+  perspective: 1200px;
+  pointer-events: none;
+  z-index: 1;
+  contain: layout;
+}
+
+.saturn-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 155vw;
+  height: 155vw;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 3;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.45), transparent 32%),
+    radial-gradient(circle at 66% 40%, rgba(255, 255, 255, 0.18), transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(90, 60, 40, 0.35), transparent 55%),
+    linear-gradient(
+      180deg,
+      #f6e7c9 0%,
+      #f0d8a8 12%,
+      #e8c98f 18%,
+      #e2bf7f 26%,
+      #d9b26f 36%,
+      #d8ad6b 44%,
+      #d2a66c 54%,
+      #d7b07a 64%,
+      #e1c292 76%,
+      #ead7ae 88%,
+      #f6e7c9 100%
+    );
+  box-shadow:
+    inset -40px -30px 80px rgba(90, 60, 40, 0.35),
+    inset 25px 20px 60px rgba(255, 255, 255, 0.18),
+    0 0 120px rgba(250, 213, 165, 0.25);
+  filter: saturate(1.05);
+}
+
+.saturn-planet::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6%;
+  border-radius: 50%;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(230, 196, 140, 0.6) 0%,
+      rgba(221, 170, 110, 0.35) 18%,
+      rgba(210, 156, 96, 0.25) 30%,
+      rgba(199, 142, 86, 0.2) 42%,
+      rgba(215, 170, 120, 0.35) 62%,
+      rgba(232, 200, 150, 0.5) 84%,
+      rgba(240, 220, 180, 0.65) 100%
+    );
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+.saturn-planet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(255, 255, 255, 0.18), transparent 45%);
+  opacity: 0.8;
+}
+
+.saturn-rings {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 300vw;
+  height: 58vw;
+  max-height: 120vh;
+  transform: translate(-50%, -50%) rotateZ(-5deg) rotateX(68deg);
+  transform-style: preserve-3d;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.saturn-scene-left {
+  --saturn-shift: 100vw;
+}
+
+.saturn-scene-right {
+  --saturn-shift: -100vw;
+}
+
+.saturn-page .saturn-scene,
+.saturn-scene-left,
+.saturn-scene-right {
+  will-change: transform;
+}
+
+.saturn-rings ellipse {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.saturn-rings ellipse:nth-child(1) {
+  stroke: rgba(250, 232, 200, 0.5);
+  stroke-width: 18;
+}
+
+.saturn-rings ellipse:nth-child(2) {
+  stroke: rgba(225, 190, 150, 0.55);
+  stroke-width: 12;
+}
+
+.saturn-rings ellipse:nth-child(3) {
+  stroke: rgba(190, 135, 95, 0.5);
+  stroke-width: 10;
+}
+
+.saturn-rings ellipse:nth-child(4) {
+  stroke: rgba(240, 210, 175, 0.6);
+  stroke-width: 12;
+}
+
+.saturn-rings ellipse:nth-child(5) {
+  stroke: rgba(175, 120, 85, 0.45);
+  stroke-width: 8;
+}
+
+.saturn-rings ellipse:nth-child(6) {
+  stroke: rgba(230, 200, 160, 0.55);
+  stroke-width: 10;
+}
+
+.saturn-rings ellipse:nth-child(7) {
+  stroke: rgba(200, 165, 125, 0.4);
+  stroke-width: 6;
+}
+
+.saturn-rings-back {
+  opacity: 0.45;
+  -webkit-mask-image:
+    linear-gradient(#000 0 45%, transparent 60%);
+  mask-image:
+    linear-gradient(#000 0 45%, transparent 60%);
+}
+
+.saturn-rings-front {
+  opacity: 0.75;
+  -webkit-mask-image:
+    linear-gradient(transparent 0 40%, #000 60%);
+  mask-image:
+    linear-gradient(transparent 0 40%, #000 60%);
+  z-index: 5;
+}
+
+.saturn-caption {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 /* Smooth panning effect for carousel navigation */

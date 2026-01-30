@@ -4,12 +4,14 @@ import SolarSystem from '../components/SolarSystem';
 import TimeDisplay from '../components/TimeDisplay';
 import NameDisplay from '../components/NameDisplay';
 import MoveAroundHint from '../components/MoveAroundHint';
+import HomepageNameCard from '../components/HomepageNameCard';
 import UFOCursor from '../components/UFOCursor';
 import ParallaxBackground from '../components/ParallaxBackground';
 ---
 
 <Layout title="home">
   <SolarSystem client:only="react" />
+  <HomepageNameCard client:load />
   <TimeDisplay client:load />
   <NameDisplay client:load />
   <MoveAroundHint client:load />

@@ -11,6 +11,23 @@ const planetColorRgb = '79, 208, 231';
   <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
     <!-- Star background -->
     <div class="absolute inset-0 page-starfield"></div>
+    <div class="saturn-scene saturn-scene-right" aria-hidden="true">
+      <svg class="saturn-rings saturn-rings-back" viewBox="0 0 2000 600" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse cx="1000" cy="300" rx="920" ry="230" />
+        <ellipse cx="1000" cy="300" rx="840" ry="210" />
+        <ellipse cx="1000" cy="300" rx="760" ry="190" />
+        <ellipse cx="1000" cy="300" rx="690" ry="172" />
+        <ellipse cx="1000" cy="300" rx="610" ry="154" />
+      </svg>
+      <div class="saturn-planet"></div>
+      <svg class="saturn-rings saturn-rings-front" viewBox="0 0 2000 600" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse cx="1000" cy="300" rx="920" ry="230" />
+        <ellipse cx="1000" cy="300" rx="840" ry="210" />
+        <ellipse cx="1000" cy="300" rx="760" ry="190" />
+        <ellipse cx="1000" cy="300" rx="690" ry="172" />
+        <ellipse cx="1000" cy="300" rx="610" ry="154" />
+      </svg>
+    </div>
     <!-- Uranus color tint -->
     <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
     <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
@@ -21,21 +38,7 @@ const planetColorRgb = '79, 208, 231';
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(79, 208, 231, 0.6), transparent);"></div>
         </div>
-        <div id="cards">
-          <MagicalHoverCard
-            glowColor="rgba(79, 208, 231, 0.25)"
-            glowRadius={850}
-            glowOpacity={0.75}
-            transitionDuration={0.25}
-            client:load
-          >
-            <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(79, 208, 231, 0.15);">
-              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-                This page will showcase my honors. Content coming soon.
-              </p>
-            </div>
-          </MagicalHoverCard>
-        </div>
+        <div id="cards"></div>
       </div>
     </div>
   </div>

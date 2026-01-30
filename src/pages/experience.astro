@@ -10,6 +10,23 @@ const planetColorRgb = '216, 202, 157';
   <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
     <!-- Star background -->
     <div class="absolute inset-0 page-starfield"></div>
+    <div class="saturn-scene saturn-scene-left" aria-hidden="true">
+      <svg class="saturn-rings saturn-rings-back" viewBox="0 0 2000 600" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse cx="1000" cy="300" rx="920" ry="230" />
+        <ellipse cx="1000" cy="300" rx="840" ry="210" />
+        <ellipse cx="1000" cy="300" rx="760" ry="190" />
+        <ellipse cx="1000" cy="300" rx="690" ry="172" />
+        <ellipse cx="1000" cy="300" rx="610" ry="154" />
+      </svg>
+      <div class="saturn-planet"></div>
+      <svg class="saturn-rings saturn-rings-front" viewBox="0 0 2000 600" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse cx="1000" cy="300" rx="920" ry="230" />
+        <ellipse cx="1000" cy="300" rx="840" ry="210" />
+        <ellipse cx="1000" cy="300" rx="760" ry="190" />
+        <ellipse cx="1000" cy="300" rx="690" ry="172" />
+        <ellipse cx="1000" cy="300" rx="610" ry="154" />
+      </svg>
+    </div>
     <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
       <div class="max-w-6xl animate-fade-in">
         <div class="border-l-4 pl-6 mb-8" style={`border-color: rgba(${planetColorRgb}, 0.4);`}>
@@ -17,11 +34,6 @@ const planetColorRgb = '216, 202, 157';
             <MagicalText text="experience" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style={`background: linear-gradient(to right, rgba(${planetColorRgb}, 0.6), transparent);`}></div>
-        </div>
-        <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style={`border-color: rgba(${planetColorRgb}, 0.15);`}>
-          <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-            This page will showcase my experience. Content coming soon.
-          </p>
         </div>
       </div>
     </div>
