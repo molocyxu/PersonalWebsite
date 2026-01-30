@@ -30,6 +30,13 @@ const STAR_VARIANT_MAP: Record<string, number> = {
   '/contacts': 1,
 };
 
+const setDocumentTitleForPath = (path: string) => {
+  const normalized = path === '' ? '/' : path;
+  const page = PAGES.find(p => p.path === normalized);
+  const title = page?.name ?? 'alex zheng';
+  document.title = `${title} | alex zheng`;
+};
+
 export default function PanoramaCarousel() {
   const paneRefs = useRef<Array<HTMLDivElement | null>>([]);
   const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -174,6 +181,7 @@ export default function PanoramaCarousel() {
     hydrateCurrentSlot(initialIndex);
     loadPaneContent(PAGES[initialIndex].path, initialIndex);
     window.history.replaceState({}, '', PAGES[initialIndex].path);
+    setDocumentTitleForPath(PAGES[initialIndex].path);
     window.dispatchEvent(new Event('panorama-path-change'));
 
     const handlePopState = () => {
@@ -181,10 +189,19 @@ export default function PanoramaCarousel() {
       setPanoramaPosition(index);
       setActiveIndex(index);
       loadPaneContent(PAGES[index].path, index);
+      setDocumentTitleForPath(PAGES[index].path);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [paneCount]);
+
+  useEffect(() => {
+    const handlePanoramaPathChange = () => {
+      setDocumentTitleForPath(window.location.pathname);
+    };
+    window.addEventListener('panorama-path-change', handlePanoramaPathChange);
+    return () => window.removeEventListener('panorama-path-change', handlePanoramaPathChange);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
