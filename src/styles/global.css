@@ -893,7 +893,7 @@ html {
   top: 50%;
   width: 300vw;
   height: 58vw;
-  max-height: 120vh;
+  max-height: 92vh;
   transform: translate(-50%, -50%) rotateZ(-5deg) rotateX(68deg);
   transform-style: preserve-3d;
   border-radius: 50%;
@@ -979,6 +979,68 @@ html {
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* Split Mars between projects and research */
+.mars-scene {
+  position: absolute;
+  left: 50vw;
+  top: 10vh;
+  width: 150vw;
+  height: 75vh;
+  transform: translate3d(calc(-50% + var(--mars-shift, 0px)), -50%, 0);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.mars-scene-projects {
+  --mars-shift: 50vw;
+}
+
+.mars-scene-research {
+  --mars-shift: -50vw;
+}
+
+.mars-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 78vw;
+  height: 62vw;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 215, 185, 0.35), transparent 36%),
+    radial-gradient(circle at 66% 42%, rgba(120, 45, 20, 0.35), transparent 52%),
+    radial-gradient(circle at 72% 64%, rgba(95, 35, 18, 0.28), transparent 56%),
+    linear-gradient(165deg, #e48756 0%, #cc5b2f 30%, #b94a24 54%, #d46a3d 74%, #e59465 100%);
+  box-shadow:
+    inset -34px -30px 80px rgba(60, 22, 10, 0.45),
+    inset 18px 16px 45px rgba(255, 230, 205, 0.2),
+    0 0 80px rgba(193, 68, 14, 0.2);
+  filter: saturate(1.08);
+}
+
+.mars-planet::before {
+  content: "";
+  position: absolute;
+  inset: 7% 8%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 22% 66%, rgba(90, 34, 17, 0.42) 0 10%, transparent 14%),
+    radial-gradient(circle at 42% 58%, rgba(80, 30, 16, 0.36) 0 8%, transparent 12%),
+    radial-gradient(circle at 58% 30%, rgba(108, 40, 20, 0.34) 0 9%, transparent 13%),
+    radial-gradient(circle at 72% 54%, rgba(84, 31, 16, 0.35) 0 7%, transparent 11%),
+    radial-gradient(circle at 36% 24%, rgba(210, 120, 76, 0.28), transparent 42%);
+  opacity: 0.8;
+}
+
+.mars-planet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 34%, rgba(255, 235, 215, 0.14), transparent 48%);
+}
+
 /* Experience ring interactions */
 .experience-rings-ui {
   position: absolute;
@@ -1004,7 +1066,7 @@ html {
   top: 50%;
   width: 300vw;
   height: 58vw;
-  max-height: 120vh;
+  max-height: 92vh;
   transform: translate(-50%, -50%) rotateZ(-5deg) rotateX(68deg);
   transform-style: preserve-3d;
   pointer-events: auto;
@@ -1127,7 +1189,7 @@ html {
   top: 50%;
   width: 300vw;
   height: 58vw;
-  max-height: 120vh;
+  max-height: 92vh;
   transform: translate(-50%, -50%) rotateZ(-5deg) rotateX(68deg);
   transform-style: preserve-3d;
   pointer-events: auto;
@@ -1142,7 +1204,7 @@ html {
 .honors-rings-click {
   position: absolute;
   right: 9vw;
-  top: 79vh;
+  top: 75vh;
   font-size: 0.82rem;
   letter-spacing: 0.14em;
   text-transform: lowercase;

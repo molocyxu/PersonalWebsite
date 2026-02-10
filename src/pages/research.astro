@@ -5,36 +5,98 @@ import MagicalText from '../components/MagicalText';
 
 const planetColor = '#C1440E'; // Mars
 const planetColorRgb = '193, 68, 14';
+
+const researchCards = [
+  {
+    title: 'coming soon...',
+    description: 'More research updates will appear here soon.',
+    widthClass: 'md:w-[60%]',
+  },
+  {
+    title: 'SmartRD: Leveraging GPT4.0 Prompting Strategies for Reasoning and Decision',
+    description:
+      'Ning Luo, Alex Zheng, Dr. Sagar Samtani. Published in 2023 INFORMS Workshop on Data Science. Presented at 2023 Wharton Business and Generative AI Workshop Poster Session.',
+    bullets: [
+      'Used ML and GPT4.0 API to improve management and assessment of common blockchain smart contract source code vulnerabilities.',
+    ],
+    widthClass: 'md:w-[68%]',
+  },
+  {
+    title: 'Predicting Perturbation Effects With Genomic Foundation Model Embeddings',
+    description:
+      'Alex Zheng, Daniel Thompson, Litian Liang.',
+    bullets: [ 'Studies whether modern genomic foundation model embeddings (from Enformer and the Nucleotide Transformer) can help a standard ML pipeline predict how a cell\'s genes change expression when a single transcription factor is activated using CRISPRa.'
+    ],
+    link: 'https://github.com/molocyxu/GenomicEmbeddings',
+    widthClass: 'md:w-[76%]',
+  },
+  {
+    title: 'Dissecting Bias of ChatGPT in College Major Recommendations',
+    description: 'Alex Zheng. Published in Information Technology and Management Journal (Springer). Regeneron Science Talent Search Top 300 Scholar.',
+    bullets: [
+      'Used Python and Google\'s Word2Vec model with novel benchmarks to uncover AI biases in college major recommendations by student demographic and educational profile.',
+    ],
+    link: 'https://link.springer.com/article/10.1007/s10799-024-00430-5',
+    widthClass: 'md:w-[84%]',
+  },
+];
 ---
 
 <Layout title="research">
   <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
     <!-- Star background -->
     <div class="absolute inset-0 page-starfield"></div>
+    <div class="mars-scene mars-scene-research" aria-hidden="true">
+      <div class="mars-planet"></div>
+    </div>
     <!-- Mars color tint -->
     <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
     <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
-      <div class="max-w-6xl animate-fade-in">
-        <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(193, 68, 14, 0.4);">
+      <div class="max-w-7xl animate-fade-in">
+        <div class="border-r-4 pr-6 mb-8 ml-auto text-right md:mr-18" style="border-color: rgba(193, 68, 14, 0.4);">
           <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
             <MagicalText text="research" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
-          <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(193, 68, 14, 0.6), transparent);"></div>
+          <div class="h-px w-24 mb-6 ml-auto" style="background: linear-gradient(to left, rgba(193, 68, 14, 0.6), transparent);"></div>
         </div>
-        <div id="cards">
-          <MagicalHoverCard
-            glowColor="rgba(193, 68, 14, 0.25)"
-            glowRadius={850}
-            glowOpacity={0.75}
-            transitionDuration={0.25}
-            client:load
-          >
-            <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(216, 202, 157, 0.15);">
-              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-                This page will showcase my research. Content coming soon.
-              </p>
-            </div>
-          </MagicalHoverCard>
+
+        <div id="cards" class="space-y-6 md:mr-18">
+          {researchCards.map((card) => (
+            <MagicalHoverCard
+              key={card.title}
+              glowColor="rgba(193, 68, 14, 0.25)"
+              glowRadius={900}
+              glowOpacity={0.8}
+              transitionDuration={0.25}
+              client:load
+              className={`w-full ${card.widthClass} ml-auto mb-2`}
+            >
+              <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-6 border" style="border-color: rgba(193, 68, 14, 0.2);">
+                <h3 class="text-lg text-white/95 font-medium tracking-tight lowercase mb-2">
+                  {card.link ? (
+                    <a href={card.link} target="_blank" rel="noopener noreferrer" class="hover:text-orange-200 transition-colors underline decoration-orange-300 decoration-2 underline-offset-4 font-semibold">
+                      {card.title}
+                    </a>
+                  ) : (
+                    card.title
+                  )}
+                </h3>
+                <p class="text-sm leading-relaxed text-white/75 font-light">{card.description}</p>
+                {card.bullets ? (
+                  <ul class="mt-3 space-y-2 text-sm text-white/70 list-disc list-inside">
+                    {card.bullets.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                {card.link ? (
+                  <a href={card.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-3 text-xs uppercase tracking-[0.12em] text-orange-200 hover:text-orange-100 underline decoration-orange-300/70 underline-offset-4">
+                    open link ↗
+                  </a>
+                ) : null}
+              </div>
+            </MagicalHoverCard>
+          ))}
         </div>
       </div>
     </div>

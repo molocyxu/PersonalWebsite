@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import MagicalHoverCard from './MagicalHoverCard';
 
 type HonorItem = {
   title: string;
@@ -25,6 +26,7 @@ const HONORS: HonorItem[] = [
     title: 'Regeneron STS Talent Search',
     achievement: 'Top 300 Scholar',
     year: '2024',
+    note: 'For the solo-author paper "Dissecting Bias of ChatGPT in College Major Recommendations": https://link.springer.com/article/10.1007/s10799-024-00430-5',
     logo: '/logos/regeneron.png',
   },
   {
@@ -101,7 +103,7 @@ export default function HonorsRings() {
         <div className="honors-rings-click">click me!</div>
       </div>
 
-      <div className="honors-ring-panel">
+      <MagicalHoverCard className="honors-ring-panel" glowColor="rgba(79, 208, 231, 0.28)" glowRadius={850} glowOpacity={0.85} transitionDuration={0.25}>
         {activeHonor ? (
           <>
             <div className="honors-ring-panel-header">
@@ -123,7 +125,7 @@ export default function HonorsRings() {
         ) : (
           <div className="honors-ring-empty">hover or click a ring to explore honors</div>
         )}
-      </div>
+      </MagicalHoverCard>
     </div>
   );
 }

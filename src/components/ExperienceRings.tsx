@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import MagicalHoverCard from './MagicalHoverCard';
 
 type ExperienceItem = {
   title: string;
@@ -116,7 +117,7 @@ export default function ExperienceRings() {
         <div className="experience-rings-click-us">click us!</div>
       </div>
 
-      <div className="experience-ring-panel">
+      <MagicalHoverCard className="experience-ring-panel" glowColor="rgba(216, 202, 157, 0.28)" glowRadius={850} glowOpacity={0.85} transitionDuration={0.25}>
         {activeExperience ? (
           <>
             <div className="experience-ring-panel-header">
@@ -148,7 +149,7 @@ export default function ExperienceRings() {
         ) : (
           <div className="experience-ring-empty">hover or click a ring to explore experience</div>
         )}
-      </div>
+      </MagicalHoverCard>
     </div>
   );
 }

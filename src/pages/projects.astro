@@ -5,36 +5,86 @@ import MagicalText from '../components/MagicalText';
 
 const planetColor = '#6B93D6'; // Earth
 const planetColorRgb = '107, 147, 214';
+
+const projectCards = [
+  {
+    title: 'Sustainable Soundscapes',
+    description:
+      'Sustainable Soundscapes is an app in Android Studio (Java) using algorithms to quantify anthropogenic noise pollution risk. Noise is mitigated through regulation technology - a token trading system built with smart contracts in Solidity.',
+    widthClass: 'md:w-[60%]',
+  },
+  {
+    title: 'SignalLens',
+    description:
+      'SignalLens helps communities share anonymous infectious disease signals for earlier visible trends. Users can submit anonymous disease reports (region/condition/result/symptoms/date/notes/coords/source), view filtered dashboards with trends, breakdowns, maps, export CSVs, and use summary/geo/report APIs with login/API keys. Built with Flask + SQLite.',
+    link: 'https://github.com/molocyxu/SignalLens',
+    widthClass: 'md:w-[68%]',
+  },
+  {
+    title: 'DeScribe',
+    description:
+      'DeScribe is an audio analysis tool. Upload and record audio, transcribe with timestamps (with novel diarization features), search/edit/clean transcripts, summarize and run custom prompts, translate, and generate semantic or tone summaries and network visuals. Offers Jupyter, GUI, and Next.js web UI. Built with Python, with Whisper and Claude support.',
+    link: 'https://github.com/molocyxu/DeScribe',
+    widthClass: 'md:w-[76%]',
+  },
+  {
+    title: 'Orbit',
+    description:
+      'Orbit is a high-end productivity dashboard combining calendar management, task tracking, status monitoring, and insights. Features: smart recurring events with custom repeat days, priority-based task sorting, custom status system, weekly calendar view, workspace presets, and four themes. Built with vanilla JavaScript, CSS3, and IndexedDB.',
+    link: 'https://github.com/molocyxu/Orbit',
+    widthClass: 'md:w-[84%]',
+  },
+];
 ---
 
 <Layout title="projects">
   <div class="min-h-screen relative overflow-hidden" style="background: transparent;">
     <!-- Star background -->
     <div class="absolute inset-0 page-starfield"></div>
+    <div class="mars-scene mars-scene-projects" aria-hidden="true">
+      <div class="mars-planet"></div>
+    </div>
     <!-- Earth color tint -->
     <div class="absolute inset-0 opacity-15" style={`background: radial-gradient(ellipse at center, rgba(${planetColorRgb}, 0.2), rgba(${planetColorRgb}, 0.05) 50%, transparent 80%);`}></div>
     <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
-      <div class="max-w-6xl animate-fade-in">
-        <div class="border-l-4 pl-6 mb-8" style="border-color: rgba(107, 147, 214, 0.4);">
+      <div class="max-w-7xl animate-fade-in">
+        <div class="border-l-4 pl-6 mb-8 md:-ml-12" style="border-color: rgba(107, 147, 214, 0.4);">
           <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
             <MagicalText text="projects" color={planetColor} colorRgb={planetColorRgb} client:load />
           </h1>
           <div class="h-px w-24 mb-6" style="background: linear-gradient(to right, rgba(107, 147, 214, 0.6), transparent);"></div>
         </div>
-        <div id="cards">
-          <MagicalHoverCard
-            glowColor="rgba(107, 147, 214, 0.25)"
-            glowRadius={850}
-            glowOpacity={0.75}
-            transitionDuration={0.25}
-            client:load
-          >
-            <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-8 border" style="border-color: rgba(107, 147, 214, 0.15);">
-              <p class="text-sm text-gray-300 font-light leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-                This page will showcase my projects. Content coming soon.
-              </p>
-            </div>
-          </MagicalHoverCard>
+
+        <div id="cards" class="space-y-6 md:-ml-12">
+          {projectCards.map((card) => (
+            <MagicalHoverCard
+              key={card.title}
+              glowColor="rgba(107, 147, 214, 0.25)"
+              glowRadius={900}
+              glowOpacity={0.8}
+              transitionDuration={0.25}
+              client:load
+              className={`w-full ${card.widthClass} mb-2`}
+            >
+              <div class="bg-black/90 backdrop-blur-sm rounded-2xl p-6 border" style="border-color: rgba(107, 147, 214, 0.2);">
+                <h3 class="text-lg text-white/95 font-medium tracking-tight lowercase mb-2">
+                  {card.link ? (
+                    <a href={card.link} target="_blank" rel="noopener noreferrer" class="hover:text-blue-200 transition-colors underline decoration-blue-300 decoration-2 underline-offset-4 font-semibold">
+                      {card.title}
+                    </a>
+                  ) : (
+                    card.title
+                  )}
+                </h3>
+                <p class="text-sm leading-relaxed text-white/75 font-light">{card.description}</p>
+                {card.link ? (
+                  <a href={card.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center mt-3 text-xs uppercase tracking-[0.12em] text-blue-200 hover:text-blue-100 underline decoration-blue-300/70 underline-offset-4">
+                    open link ↗
+                  </a>
+                ) : null}
+              </div>
+            </MagicalHoverCard>
+          ))}
         </div>
       </div>
     </div>
