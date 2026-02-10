@@ -27,13 +27,11 @@ const planetColorRgb = '250, 213, 165';
         <ellipse cx="1000" cy="300" rx="610" ry="154" />
       </svg>
     </div>
-    <div class="max-w-7xl mx-auto px-10 py-24 relative z-10">
-      <div class="max-w-6xl animate-fade-in">
-        <div class="border-l-4 pl-6 mb-8" style={`border-color: rgba(${planetColorRgb}, 0.4);`}>
-          <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
-            <MagicalText text="saturn." color="#1b1b1b" colorRgb="27, 27, 27" client:load />
-          </h1>
-        </div>
+    <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+      <div class="animate-fade-in text-center pointer-events-auto">
+        <h1 class="text-3xl font-medium mb-4 lowercase tracking-tight">
+          <MagicalText text="saturn." color="#1b1b1b" colorRgb="27, 27, 27" client:load />
+        </h1>
       </div>
     </div>
   </div>

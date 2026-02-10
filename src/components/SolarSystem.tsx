@@ -1172,7 +1172,9 @@ function Sun({ onClick }: { onClick: () => void }) {
 // Asteroid Belt between Mars and Jupiter - optimized with single useFrame
 function AsteroidBelt() {
   const groupRef = useRef<THREE.Group>(null);
+  const hoverMeshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const { camera } = useThree();
   const asteroidsRef = useRef<Array<{
     mesh: THREE.Mesh;
     angle: number;
@@ -1251,9 +1253,30 @@ function AsteroidBelt() {
     <group ref={groupRef}>
       {/* Hover/click ring for Asteroid Belt */}
       <mesh
+        ref={hoverMeshRef}
         rotation={[-Math.PI / 2, 0, 0]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          if (hoverMeshRef.current) {
+            const worldPosition = new THREE.Vector3();
+            hoverMeshRef.current.getWorldPosition(worldPosition);
+            const vector = worldPosition.clone().project(camera);
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+            
+            window.dispatchEvent(new CustomEvent('planet-hover', { 
+              detail: { 
+                isHovering: true, 
+                planetName: 'Asteroid Belt',
+                planetData: { x, y, size: 12.4 * 50 }
+              } 
+            }));
+          }
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
         onClick={() => {
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/education' } }));
@@ -1289,7 +1312,9 @@ function AsteroidBelt() {
 // Kuiper Belt beyond Neptune (icy bodies) - optimized with single useFrame
 function KuiperBelt() {
   const groupRef = useRef<THREE.Group>(null);
+  const hoverMeshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const { camera } = useThree();
   const objectsRef = useRef<Array<{
     mesh: THREE.Mesh;
     angle: number;
@@ -1368,9 +1393,30 @@ function KuiperBelt() {
     <group ref={groupRef}>
       {/* Hover/click ring for Kuiper Belt */}
       <mesh
+        ref={hoverMeshRef}
         rotation={[-Math.PI / 2, 0, 0]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          if (hoverMeshRef.current) {
+            const worldPosition = new THREE.Vector3();
+            hoverMeshRef.current.getWorldPosition(worldPosition);
+            const vector = worldPosition.clone().project(camera);
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+            
+            window.dispatchEvent(new CustomEvent('planet-hover', { 
+              detail: { 
+                isHovering: true, 
+                planetName: 'Kuiper Belt',
+                planetData: { x, y, size: 39.0 * 50 }
+              } 
+            }));
+          }
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+        }}
         onClick={() => {
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/skills' } }));
@@ -1408,6 +1454,7 @@ function Satellite() {
   const groupRef = useRef<THREE.Group>(null);
   const startTimeRef = useRef(Date.now());
   const [hovered, setHovered] = useState(false);
+  const { camera } = useThree();
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -1423,8 +1470,28 @@ function Satellite() {
   return (
     <group
       ref={groupRef}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
+      onPointerOver={() => {
+        setHovered(true);
+        if (groupRef.current) {
+          const worldPosition = new THREE.Vector3();
+          groupRef.current.getWorldPosition(worldPosition);
+          const vector = worldPosition.clone().project(camera);
+          const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+          
+          window.dispatchEvent(new CustomEvent('planet-hover', { 
+            detail: { 
+              isHovering: true, 
+              planetName: 'Satellite',
+              planetData: { x, y, size: 0.8 * 50 }
+            } 
+          }));
+        }
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        window.dispatchEvent(new CustomEvent('planet-hover', { detail: { isHovering: false, planetName: null } }));
+      }}
       onClick={() => {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('carousel-navigate', { detail: { path: '/contacts' } }));

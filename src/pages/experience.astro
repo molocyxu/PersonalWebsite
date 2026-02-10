@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import MagicalText from '../components/MagicalText';
+import ExperienceRings from '../components/ExperienceRings';
 
 const planetColor = '#D8CA9D'; // Jupiter
 const planetColorRgb = '216, 202, 157';
@@ -37,6 +38,7 @@ const planetColorRgb = '216, 202, 157';
         </div>
       </div>
     </div>
+    <ExperienceRings client:load />
   </div>
 </Layout>
 

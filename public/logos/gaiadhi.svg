@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80" role="img" aria-label="GaiaDhi logo">
+  <rect width="220" height="80" rx="10" fill="#ffffff"/>
+  <circle cx="36" cy="40" r="17" fill="#2f7f5f"/>
+  <path d="M30 45 C30 28, 48 25, 50 40 C48 53, 35 56, 30 45 Z" fill="#71c08d"/>
+  <text x="62" y="48" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#164c37">GaiaDhi</text>
+</svg>

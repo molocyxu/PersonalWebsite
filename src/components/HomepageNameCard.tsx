@@ -9,7 +9,7 @@ export default function HomepageNameCard() {
       <motion.div
         className="text-white text-xl font-normal lowercase tracking-wide"
       >
-        alex zheng | cmu cs | incoming @ jane
+        alex zheng | cmu cs | inc @ jane
       </motion.div>
     </motion.div>
   );
