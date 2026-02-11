@@ -2,12 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 import MagicalText from '../components/MagicalText';
 import GalleryMouseStamps from '../components/GalleryMouseStamps';
+import { readdir } from 'fs/promises';
+import { join } from 'path';
 
 const planetColor = '#8C7853'; // Mercury
 const planetColorRgb = '140, 120, 83';
+
+// Dynamically scan the gallery folder for images at build time
+// Supports: jpg, jpeg, png, heic (note: HEIC files may not display in all browsers)
+let imageSources: string[] = [];
+try {
+  const galleryPath = join(process.cwd(), 'public', 'gallery');
+  const files = await readdir(galleryPath);
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.heic', '.JPG', '.JPEG', '.PNG', '.HEIC'];
+  imageSources = files
+    .filter(file => imageExtensions.some(ext => file.endsWith(ext)))
+    .map(file => `/gallery/${file}`)
+    .sort(); // Sort alphabetically for consistent ordering
+} catch (error) {
+  // Fallback to placeholder images if gallery folder doesn't exist
+  console.warn('Gallery folder not found, using placeholder images');
+  imageSources = [];
+}
 ---
 
 <Layout title="gallery">
+  <Fragment slot="head">
+    {imageSources.slice(0, 5).map((src) => (
+      <link rel="preload" as="image" href={src} fetchpriority="high" />
+    ))}
+    {imageSources.slice(5).map((src) => (
+      <link rel="prefetch" as="image" href={src} />
+    ))}
+  </Fragment>
   <div class="h-screen relative overflow-hidden gallery-page" style="background: transparent;">
     <!-- Star background -->
     <div class="absolute inset-0 page-starfield"></div>
@@ -26,7 +53,7 @@ const planetColorRgb = '140, 120, 83';
       </div>
     </div>
 
-    <GalleryMouseStamps client:load />
+    <GalleryMouseStamps imageSources={imageSources} client:load />
     <div class="page-tip"><div class="page-tip-text">move around!</div></div>
   </div>
 </Layout>

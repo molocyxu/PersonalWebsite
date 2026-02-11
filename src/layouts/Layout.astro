@@ -29,6 +29,7 @@ const { title } = Astro.props;
     <link rel="prefetch" href="/contacts" />
     <!-- Performance optimization: defer non-critical scripts -->
     <title>{title} | alex zheng</title>
+    <slot name="head" />
   </head>
   <body style="overflow-x: hidden; position: relative;">
     <div id="panorama-bg" aria-hidden="true"></div>

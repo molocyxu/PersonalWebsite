@@ -1,21 +1,41 @@
 import { useEffect, useRef } from 'react';
 
-const IMAGE_SOURCES = [
-  '/gallery/placeholder-1.png',
-  '/gallery/placeholder-2.png',
-  '/gallery/placeholder-3.png',
-  '/gallery/placeholder-4.png',
-  '/gallery/placeholder-5.png',
-  '/gallery/placeholder-6.png',
-  '/gallery/placeholder-7.png',
-  '/gallery/placeholder-8.png',
-];
-
 const VISIBLE_COUNT = 5;
 const IMAGE_WIDTH_VMIN = 24;
 
-export default function GalleryMouseStamps() {
+interface GalleryMouseStampsProps {
+  imageSources?: string[];
+}
+
+export default function GalleryMouseStamps({ imageSources = [] }: GalleryMouseStampsProps) {
+  // Fallback to placeholder images if no images provided
+  const IMAGE_SOURCES = imageSources.length > 0 
+    ? imageSources 
+    : [
+        '/gallery/placeholder-1.png',
+        '/gallery/placeholder-2.png',
+        '/gallery/placeholder-3.png',
+        '/gallery/placeholder-4.png',
+        '/gallery/placeholder-5.png',
+        '/gallery/placeholder-6.png',
+        '/gallery/placeholder-7.png',
+        '/gallery/placeholder-8.png',
+      ];
   const containerRef = useRef<HTMLDivElement>(null);
+  const imagesLoadedRef = useRef<Set<string>>(new Set());
+
+  // Preload all images immediately when component mounts
+  useEffect(() => {
+    const preloadImages = () => {
+      IMAGE_SOURCES.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+        img.loading = 'eager';
+        imagesLoadedRef.current.add(src);
+      });
+    };
+    preloadImages();
+  }, [IMAGE_SOURCES]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -89,7 +109,8 @@ export default function GalleryMouseStamps() {
           src={src}
           alt={`gallery stamp ${index + 1}`}
           style={{ width: `${IMAGE_WIDTH_VMIN}vmin` }}
-          loading="lazy"
+          loading="eager"
+          fetchPriority={index < 5 ? "high" : "auto"}
           draggable={false}
         />
       ))}
