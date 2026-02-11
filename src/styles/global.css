@@ -810,6 +810,21 @@ html {
   min-height: 100%;
 }
 
+/* Disable scrolling on all pages */
+.panorama-pane:has(.hobbies-page),
+.panorama-pane:has(.gallery-page),
+.panorama-pane:has(.timeline-page),
+.panorama-pane:has(.projects-page),
+.panorama-pane:has(.research-page),
+.panorama-pane:has(.education-page),
+.panorama-pane:has(.experience-page),
+.panorama-pane:has(.saturn-page),
+.panorama-pane:has(.honors-page),
+.panorama-pane:has(.skills-page),
+.panorama-pane:has(.contacts-page) {
+  overflow-y: hidden;
+}
+
 /* Saturn page scene */
 .saturn-scene {
   position: absolute;
