@@ -22,6 +22,7 @@ const planetColorRgb = '75, 112, 221';
     </div>
 
     <div class="hobby-node hobby-cube-node">
+      <p class="hobby-object-title">speedcubing</p>
       <div class="hobby-object rubiks-cube" role="img" aria-label="3d rubiks cube">
         <div class="rubiks-inner">
           <div class="cube-core"></div>
@@ -61,6 +62,7 @@ const planetColorRgb = '75, 112, 221';
     </div>
 
     <div class="hobby-node hobby-tetris-node">
+      <p class="hobby-object-title">tetris</p>
       <div class="hobby-object tetris-piece" role="img" aria-label="3d purple t tetris block">
         <div class="tetromino-3d">
           <div class="t-cube t1">
@@ -92,6 +94,7 @@ const planetColorRgb = '75, 112, 221';
     </div>
 
     <div class="hobby-node hobby-set-node">
+      <p class="hobby-object-title">set</p>
       <div class="hobby-object set-card" role="img" aria-label="set card with three green striped diamonds">
         <div class="set-diamond"></div>
         <div class="set-diamond"></div>
@@ -100,7 +103,26 @@ const planetColorRgb = '75, 112, 221';
       <p class="hobby-label set-label"> <a href="https://setwithfriends.com/" target="_blank" rel="noopener noreferrer" class="rank-link">pb - 1:02:36</a> </p>
     </div>
 
-    <div class="page-tip"><div class="page-tip-text">hover over objects!</div></div>
+    <div class="hobby-node hobby-basketball-node">
+      <p class="hobby-object-title">hoops</p>
+      <div class="hobby-object basketball" role="img" aria-label="3d basketball">
+        <span class="basketball-seam seam-equator"></span>
+        <span class="basketball-seam seam-meridian-left"></span>
+        <span class="basketball-seam seam-meridian-right"></span>
+      </div>
+    </div>
+
+    <div class="hobby-node hobby-poker-node">
+      <p class="hobby-object-title">poker</p>
+      <div class="hobby-object poker-card" role="img" aria-label="two of hearts card">
+        <span class="card-corner card-corner-top">2 ♥</span>
+        <span class="card-corner card-corner-bottom">2 ♥</span>
+        <span class="card-pips">
+          <span>♥</span>
+          <span>♥</span>
+        </span>
+      </div>
+    </div>
   </div>
 </Layout>
 
@@ -150,6 +172,16 @@ const planetColorRgb = '75, 112, 221';
     white-space: nowrap;
   }
 
+  .hobby-object-title {
+    margin: 0 0 0.45rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+    color: rgba(220, 236, 255, 0.82);
+    text-shadow: 0 0 12px rgba(122, 170, 245, 0.5);
+    white-space: nowrap;
+  }
+
   .hobby-cube-node {
     left: 10%;
     top: 23%;
@@ -170,6 +202,20 @@ const planetColorRgb = '75, 112, 221';
     bottom: 18%;
     animation-name: drift-set;
     animation-duration: 8.6s;
+  }
+
+  .hobby-basketball-node {
+    left: 14%;
+    bottom: 14%;
+    animation-name: drift-basketball;
+    animation-duration: 7.9s;
+  }
+
+  .hobby-poker-node {
+    right: 12%;
+    top: 22%;
+    animation-name: drift-poker;
+    animation-duration: 8.3s;
   }
 
   .rubiks-cube {
@@ -415,6 +461,119 @@ const planetColorRgb = '75, 112, 221';
   box-sizing: border-box;
 }
 
+  .basketball {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    overflow: hidden;
+    animation: spin-basketball 10.1s linear infinite;
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255, 224, 174, 0.52), transparent 32%),
+      radial-gradient(circle at 68% 74%, rgba(86, 34, 9, 0.38), transparent 52%),
+      radial-gradient(circle at 50% 58%, rgba(210, 110, 34, 0.28), transparent 62%),
+      linear-gradient(145deg, #f29f3f 0%, #dc7929 55%, #b75619 100%);
+    box-shadow:
+      inset -15px -16px 24px rgba(74, 28, 8, 0.42),
+      inset 9px 8px 12px rgba(255, 222, 178, 0.28),
+      0 0 16px rgba(240, 155, 58, 0.3);
+  }
+
+  .basketball-seam {
+    position: absolute;
+    border: 2.4px solid rgba(22, 10, 3, 0.86);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .seam-equator {
+    width: 120%;
+    height: 48%;
+    left: -10%;
+    top: 26%;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    transform: rotate(-4deg);
+  }
+
+  .seam-meridian-left,
+  .seam-meridian-right {
+    width: 62%;
+    height: 122%;
+    top: -11%;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  .seam-meridian-left {
+    left: -30%;
+    transform: rotate(6deg);
+  }
+
+  .seam-meridian-right {
+    right: -30%;
+    transform: rotate(-6deg);
+  }
+
+  .poker-card {
+    width: 108px;
+    height: 148px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(243, 244, 251, 0.93));
+    box-shadow:
+      0 0 16px rgba(200, 205, 255, 0.25),
+      inset 0 0 0 3px rgba(214, 24, 57, 0.08),
+      inset -8px -10px 14px rgba(0, 0, 0, 0.1);
+    animation: spin-poker 9.7s linear infinite;
+    transform-style: preserve-3d;
+  }
+
+  .poker-card::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: 3px;
+    width: 8px;
+    height: calc(100% - 6px);
+    border-radius: 0 8px 8px 0;
+    background: linear-gradient(90deg, rgba(191, 191, 208, 0.9), rgba(145, 145, 168, 0.95));
+  }
+
+  .card-corner {
+    position: absolute;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #d31839;
+    letter-spacing: 0.03em;
+    font-family: "Times New Roman", serif;
+  }
+
+  .card-corner-top {
+    left: 10px;
+    top: 8px;
+  }
+
+  .card-corner-bottom {
+    right: 10px;
+    bottom: 8px;
+    transform: rotate(180deg);
+  }
+
+  .card-pips {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(0.5deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.1rem;
+    font-size: 1.62rem;
+    color: #d31839;
+    text-shadow: 0 0 8px rgba(211, 24, 57, 0.2);
+    font-family: "Times New Roman", serif;
+  }
+
   @keyframes drift-cube {
     0%, 100% { transform: translate3d(0, 0, 0); }
     25% { transform: translate3d(10px, -8px, 0); }
@@ -434,6 +593,18 @@ const planetColorRgb = '75, 112, 221';
     70% { transform: translate3d(-7px, 6px, 0); }
   }
 
+  @keyframes drift-basketball {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    33% { transform: translate3d(7px, -9px, 0); }
+    66% { transform: translate3d(-8px, -5px, 0); }
+  }
+
+  @keyframes drift-poker {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    34% { transform: translate3d(-7px, -9px, 0); }
+    68% { transform: translate3d(8px, -4px, 0); }
+  }
+
   @keyframes spin-cube {
     0%, 100% { transform: rotateX(-24deg) rotateY(32deg) rotateZ(0deg); }
     50% { transform: rotateX(-18deg) rotateY(-24deg) rotateZ(4deg); }
@@ -447,6 +618,16 @@ const planetColorRgb = '75, 112, 221';
   @keyframes spin-card {
     0%, 100% { transform: rotateX(8deg) rotateY(-10deg) rotateZ(4deg); }
     50% { transform: rotateX(-4deg) rotateY(10deg) rotateZ(-3deg); }
+  }
+
+  @keyframes spin-basketball {
+    0%, 100% { transform: rotateX(-12deg) rotateY(18deg) rotateZ(0deg); }
+    50% { transform: rotateX(-8deg) rotateY(-16deg) rotateZ(3deg); }
+  }
+
+  @keyframes spin-poker {
+    0%, 100% { transform: rotateX(10deg) rotateY(-14deg) rotateZ(3deg); }
+    50% { transform: rotateX(3deg) rotateY(14deg) rotateZ(-2deg); }
   }
 
   @media (max-width: 900px) {
@@ -465,6 +646,16 @@ const planetColorRgb = '75, 112, 221';
       bottom: 9%;
     }
 
+    .hobby-basketball-node {
+      left: 10%;
+      bottom: 8%;
+    }
+
+    .hobby-poker-node {
+      right: 8%;
+      top: 24%;
+    }
+
     .rubiks-cube {
       width: 84px;
       height: 84px;
@@ -480,9 +671,24 @@ const planetColorRgb = '75, 112, 221';
       height: 112px;
     }
 
+    .basketball {
+      width: 78px;
+      height: 78px;
+    }
+
+    .poker-card {
+      width: 96px;
+      height: 132px;
+    }
+
     .hobby-label {
       font-size: 0.68rem;
       letter-spacing: 0.1em;
+    }
+
+    .hobby-object-title {
+      font-size: 0.64rem;
+      letter-spacing: 0.11em;
     }
   }
 </style>
