@@ -737,6 +737,561 @@ body.page-loaded [class*="animate-fade-in"] {
   animation: fade-in 0.8s ease-out forwards;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Hobbies page (moved from inline <style> in `hobbies.astro` so it works when */
+/* the pane is lazy-loaded via PanoramaCarousel fetch() without a full reload) */
+/* -------------------------------------------------------------------------- */
+
+.hobby-node {
+  position: absolute;
+  z-index: 20;
+  perspective: 420px;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.hobby-object {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, filter 220ms ease;
+  filter: brightness(0.95);
+}
+
+.hobby-node:hover .hobby-object {
+  transform: scale(1.08);
+  filter: brightness(1.2) drop-shadow(0 0 16px rgba(180, 210, 255, 0.45));
+}
+
+.hobby-label {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: rgba(235, 242, 255, 0.88);
+  text-shadow: 0 0 14px rgba(140, 175, 255, 0.5);
+  white-space: nowrap;
+}
+
+.hobby-object-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  color: rgba(220, 236, 255, 0.82);
+  text-shadow: 0 0 12px rgba(122, 170, 245, 0.5);
+  white-space: nowrap;
+}
+
+.hobby-cube-node {
+  left: 10%;
+  top: 23%;
+  animation-name: drift-cube;
+  animation-duration: 8s;
+}
+
+.hobby-tetris-node {
+  right: 11%;
+  bottom: 16%;
+  text-align: right;
+  animation-name: drift-tetris;
+  animation-duration: 7.4s;
+}
+
+.hobby-set-node {
+  left: 42%;
+  bottom: 18%;
+  animation-name: drift-set;
+  animation-duration: 8.6s;
+}
+
+.hobby-basketball-node {
+  left: 14%;
+  bottom: 14%;
+  animation-name: drift-basketball;
+  animation-duration: 7.9s;
+}
+
+.hobby-poker-node {
+  right: 12%;
+  top: 22%;
+  animation-name: drift-poker;
+  animation-duration: 8.3s;
+}
+
+.rubiks-cube {
+  --cube-face-size: 92px;
+  --cube-depth: 46px;
+  width: 106px;
+  height: 106px;
+  transform-style: preserve-3d;
+}
+
+.rubiks-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: spin-cube 11s linear infinite;
+}
+
+.cube-face {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  width: var(--cube-face-size);
+  height: var(--cube-face-size);
+  padding: 4px;
+  background: rgba(6, 8, 13, 0.96);
+  border-radius: 8px;
+  box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.08), 0 0 18px rgba(0, 0, 0, 0.5);
+}
+
+.cube-face span {
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 7px rgba(255, 255, 255, 0.2);
+}
+
+.cube-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88px;
+  height: 88px;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  background: rgba(3, 5, 8, 0.98);
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.05);
+}
+
+.cube-front {
+  transform: translate(-50%, -50%) translateZ(var(--cube-depth));
+}
+
+.cube-top {
+  transform: translate(-50%, -50%) rotateX(90deg) translateZ(var(--cube-depth));
+}
+
+.cube-right {
+  transform: translate(-50%, -50%) rotateY(90deg) translateZ(var(--cube-depth));
+}
+
+.cube-left {
+  transform: translate(-50%, -50%) rotateY(-90deg) translateZ(var(--cube-depth));
+}
+
+.cube-back {
+  transform: translate(-50%, -50%) rotateY(180deg) translateZ(var(--cube-depth));
+}
+
+.cube-bottom {
+  transform: translate(-50%, -50%) rotateX(-90deg) translateZ(var(--cube-depth));
+}
+
+.cube-front span:nth-child(1) { background: #ff3b3b; }
+.cube-front span:nth-child(2) { background: #ffd538; }
+.cube-front span:nth-child(3) { background: #2a7dff; }
+.cube-front span:nth-child(4) { background: #35c26b; }
+.cube-front span:nth-child(5) { background: #fff2d0; }
+.cube-front span:nth-child(6) { background: #ff8c25; }
+.cube-front span:nth-child(7) { background: #2a7dff; }
+.cube-front span:nth-child(8) { background: #ff3b3b; }
+.cube-front span:nth-child(9) { background: #ffd538; }
+
+.cube-top span:nth-child(1) { background: #fff2d0; }
+.cube-top span:nth-child(2) { background: #ff3b3b; }
+.cube-top span:nth-child(3) { background: #35c26b; }
+.cube-top span:nth-child(4) { background: #2a7dff; }
+.cube-top span:nth-child(5) { background: #2a7dff; }
+.cube-top span:nth-child(6) { background: #35c26b; }
+.cube-top span:nth-child(7) { background: #2a7dff; }
+.cube-top span:nth-child(8) { background: #ff3b3b; }
+.cube-top span:nth-child(9) { background: #35c26b; }
+
+.cube-right span:nth-child(1) { background: #ff8c25; }
+.cube-right span:nth-child(2) { background: #ff3b3b; }
+.cube-right span:nth-child(3) { background: #35c26b; }
+.cube-right span:nth-child(4) { background: #2a7dff; }
+.cube-right span:nth-child(5) { background: #ff3b3b; }
+.cube-right span:nth-child(6) { background: #2a7dff; }
+.cube-right span:nth-child(7) { background: #2a7dff; }
+.cube-right span:nth-child(8) { background: #ff3b3b; }
+.cube-right span:nth-child(9) { background: #ff8c25; }
+
+.cube-left span:nth-child(1) { background: #fff2d0; }
+.cube-left span:nth-child(2) { background: #fff2d0; }
+.cube-left span:nth-child(3) { background: #ffd538; }
+.cube-left span:nth-child(4) { background: #ff8c25; }
+.cube-left span:nth-child(5) { background: #ff8c25; }
+.cube-left span:nth-child(6) { background: #2a7dff; }
+.cube-left span:nth-child(7) { background: #ffd538; }
+.cube-left span:nth-child(8) { background: #fff2d0; }
+.cube-left span:nth-child(9) { background: #ffd538; }
+
+.cube-back span:nth-child(3n + 1) { background: #35c26b; }
+.cube-back span:nth-child(3n + 2) { background: #ff8c25; }
+.cube-back span:nth-child(3n) { background: #fff2d0; }
+.cube-bottom span:nth-child(odd) { background: #ff3b3b; }
+.cube-bottom span:nth-child(even) { background: #35c26b; }
+
+.tetris-piece {
+  width: 142px;
+  height: 122px;
+  animation: spin-tetris 9.5s linear infinite;
+  transform-style: preserve-3d;
+}
+
+.tetromino-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.t-cube {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  transform-style: preserve-3d;
+}
+
+.t-face {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid rgba(69, 29, 130, 0.8);
+}
+
+.t-face-front {
+  inset: 0;
+  border-radius: 4px;
+  background: linear-gradient(150deg, #cb8cff 0%, #a260f0 58%, #733ac9 100%);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.26), 0 0 12px rgba(150, 80, 255, 0.34);
+}
+
+.t-face-top {
+  left: 0;
+  top: -10px;
+  width: 100%;
+  height: 10px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #e5bdff 0%, #c386fb 100%);
+  transform-origin: bottom left;
+  transform: skewX(-45deg);
+}
+
+.t-face-right {
+  right: -10px;
+  top: 0;
+  width: 10px;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(90deg, #6d32bf 0%, #4a1f94 100%);
+  transform-origin: left top;
+  transform: skewY(-45deg);
+}
+
+.t1 { left: 10px; top: 52px; }
+.t2 { left: 44px; top: 52px; }
+.t3 { left: 78px; top: 52px; }
+.t4 { left: 44px; top: 18px; }
+
+.rank-link {
+  color: #a7c6ff;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: color 180ms ease, text-shadow 180ms ease;
+}
+
+.rank-link:hover {
+  color: #d6e7ff;
+  text-shadow: 0 0 12px rgba(173, 205, 255, 0.7);
+}
+
+.set-card {
+  width: 220px;
+  height: 128px;
+  padding: 18px 16px;
+  border-radius: 13px;
+  border: 1px solid rgba(120, 200, 140, 0.6);
+  background: linear-gradient(140deg, rgba(250, 255, 250, 0.96) 0%, rgba(238, 248, 239, 0.92) 70%, rgba(210, 235, 214, 0.92) 100%);
+  box-shadow: 0 0 24px rgba(95, 180, 120, 0.32), inset 0 0 12px rgba(80, 165, 100, 0.16);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  animation: spin-card 10.5s linear infinite;
+}
+
+.set-diamond{
+  --w: 46px;
+  --h: 88px;
+  --border: 6px;
+  --green: #0b7a13;
+
+  width: var(--w);
+  height: var(--h);
+  position: relative;
+
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(11,122,19,0.95) 0 3px,
+      rgba(255,255,255,1) 3px 8px
+    );
+
+  filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+}
+
+.set-diamond::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  background: var(--green);
+  clip-path: inherit;
+  z-index: -1;
+}
+
+.set-diamond{
+  padding: var(--border);
+  box-sizing: border-box;
+}
+
+.basketball {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: spin-basketball 10.1s linear infinite;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 224, 174, 0.52), transparent 32%),
+    radial-gradient(circle at 68% 74%, rgba(86, 34, 9, 0.38), transparent 52%),
+    radial-gradient(circle at 50% 58%, rgba(210, 110, 34, 0.28), transparent 62%),
+    linear-gradient(145deg, #f29f3f 0%, #dc7929 55%, #b75619 100%);
+  box-shadow:
+    inset -15px -16px 24px rgba(74, 28, 8, 0.42),
+    inset 9px 8px 12px rgba(255, 222, 178, 0.28),
+    0 0 16px rgba(240, 155, 58, 0.3);
+}
+
+.basketball-seam {
+  position: absolute;
+  border: 2.4px solid rgba(22, 10, 3, 0.86);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.seam-equator {
+  width: 120%;
+  height: 48%;
+  left: -10%;
+  top: 26%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  transform: rotate(-4deg);
+}
+
+.seam-meridian-left,
+.seam-meridian-right {
+  width: 62%;
+  height: 122%;
+  top: -11%;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.seam-meridian-left {
+  left: -30%;
+  transform: rotate(6deg);
+}
+
+.seam-meridian-right {
+  right: -30%;
+  transform: rotate(-6deg);
+}
+
+.poker-card {
+  width: 108px;
+  height: 148px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(243, 244, 251, 0.93));
+  box-shadow:
+    0 0 16px rgba(200, 205, 255, 0.25),
+    inset 0 0 0 3px rgba(214, 24, 57, 0.08),
+    inset -8px -10px 14px rgba(0, 0, 0, 0.1);
+  animation: spin-poker 9.7s linear infinite;
+  transform-style: preserve-3d;
+}
+
+.poker-card::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 3px;
+  width: 8px;
+  height: calc(100% - 6px);
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(90deg, rgba(191, 191, 208, 0.9), rgba(145, 145, 168, 0.95));
+}
+
+.card-corner {
+  position: absolute;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #d31839;
+  letter-spacing: 0.03em;
+  font-family: "Times New Roman", serif;
+}
+
+.card-corner-top {
+  left: 10px;
+  top: 8px;
+}
+
+.card-corner-bottom {
+  right: 10px;
+  bottom: 8px;
+  transform: rotate(180deg);
+}
+
+.card-pips {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(0.5deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.1rem;
+  font-size: 1.62rem;
+  color: #d31839;
+  text-shadow: 0 0 8px rgba(211, 24, 57, 0.2);
+  font-family: "Times New Roman", serif;
+}
+
+@keyframes drift-cube {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(10px, -8px, 0); }
+  50% { transform: translate3d(-8px, -5px, 0); }
+  75% { transform: translate3d(4px, 8px, 0); }
+}
+
+@keyframes drift-tetris {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  30% { transform: translate3d(-9px, -6px, 0); }
+  60% { transform: translate3d(7px, -10px, 0); }
+}
+
+@keyframes drift-set {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  35% { transform: translate3d(8px, -10px, 0); }
+  70% { transform: translate3d(-7px, 6px, 0); }
+}
+
+@keyframes drift-basketball {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(7px, -9px, 0); }
+  66% { transform: translate3d(-8px, -5px, 0); }
+}
+
+@keyframes drift-poker {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  34% { transform: translate3d(-7px, -9px, 0); }
+  68% { transform: translate3d(8px, -4px, 0); }
+}
+
+@keyframes spin-cube {
+  0%, 100% { transform: rotateX(-24deg) rotateY(32deg) rotateZ(0deg); }
+  50% { transform: rotateX(-18deg) rotateY(-24deg) rotateZ(4deg); }
+}
+
+@keyframes spin-tetris {
+  0%, 100% { transform: rotateX(-16deg) rotateY(20deg) rotateZ(-5deg); }
+  50% { transform: rotateX(-10deg) rotateY(-14deg) rotateZ(5deg); }
+}
+
+@keyframes spin-card {
+  0%, 100% { transform: rotateX(8deg) rotateY(-10deg) rotateZ(4deg); }
+  50% { transform: rotateX(-4deg) rotateY(10deg) rotateZ(-3deg); }
+}
+
+@keyframes spin-basketball {
+  0%, 100% { transform: rotateX(-12deg) rotateY(18deg) rotateZ(0deg); }
+  50% { transform: rotateX(-8deg) rotateY(-16deg) rotateZ(3deg); }
+}
+
+@keyframes spin-poker {
+  0%, 100% { transform: rotateX(10deg) rotateY(-14deg) rotateZ(3deg); }
+  50% { transform: rotateX(3deg) rotateY(14deg) rotateZ(-2deg); }
+}
+
+@media (max-width: 900px) {
+  .hobby-cube-node {
+    left: 8%;
+    top: 27%;
+  }
+
+  .hobby-set-node {
+    left: 40%;
+    bottom: 13%;
+  }
+
+  .hobby-tetris-node {
+    right: 7%;
+    bottom: 9%;
+  }
+
+  .hobby-basketball-node {
+    left: 10%;
+    bottom: 8%;
+  }
+
+  .hobby-poker-node {
+    right: 8%;
+    top: 24%;
+  }
+
+  .rubiks-cube {
+    width: 84px;
+    height: 84px;
+  }
+
+  .tetris-piece {
+    width: 122px;
+    height: 102px;
+  }
+
+  .set-card {
+    width: 190px;
+    height: 112px;
+  }
+
+  .basketball {
+    width: 78px;
+    height: 78px;
+  }
+
+  .poker-card {
+    width: 96px;
+    height: 132px;
+  }
+
+  .hobby-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .hobby-object-title {
+    font-size: 0.64rem;
+    letter-spacing: 0.11em;
+  }
+}
+
 /* Loading screen visibility handled by component */
 #loading-screen {
   display: flex !important;
