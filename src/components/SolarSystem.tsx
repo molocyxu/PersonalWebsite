@@ -82,8 +82,8 @@ const PLANETS = [
     distance: 30, 
     period: 60182,
     initialAngle: Math.PI / 8,
-    page: '/life',
-    pageName: 'life'
+    page: '/hobbies',
+    pageName: 'hobbies'
   },
 ];
 

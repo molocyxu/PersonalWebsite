@@ -10,7 +10,7 @@ const PAGES = [
   { path: '/experience', name: 'experience' },
   { path: '/saturn', name: 'saturn.' },
   { path: '/honors', name: 'honors' },
-  { path: '/life', name: 'life' },
+  { path: '/hobbies', name: 'hobbies' },
   { path: '/skills', name: 'skills' },
   { path: '/contacts', name: 'contacts' },
 ];

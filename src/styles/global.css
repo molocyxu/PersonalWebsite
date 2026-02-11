@@ -1278,6 +1278,44 @@ html {
   color: rgba(220, 244, 255, 0.72);
 }
 
+/* Gallery mousemove image stamps */
+.gallery-stamp-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.image {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.14);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.image[data-status="inactive"] {
+  display: none;
+}
+
+.image[data-status="active"] {
+  display: block;
+  animation: gallery-stamp-in 280ms ease-out;
+}
+
+@keyframes gallery-stamp-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Smooth panning effect for carousel navigation */
 body, html {
   overflow: hidden;

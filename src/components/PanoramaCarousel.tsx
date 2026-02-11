@@ -10,7 +10,7 @@ const PAGES = [
   { path: '/experience', name: 'experience' },
   { path: '/saturn', name: 'saturn.' },
   { path: '/honors', name: 'honors' },
-  { path: '/life', name: 'life' },
+  { path: '/hobbies', name: 'hobbies' },
   { path: '/skills', name: 'skills' },
   { path: '/contacts', name: 'contacts' },
 ];
@@ -25,7 +25,7 @@ const STAR_VARIANT_MAP: Record<string, number> = {
   '/experience': 2,
   '/saturn': 0,
   '/honors': 1,
-  '/life': 2,
+  '/hobbies': 2,
   '/skills': 0,
   '/contacts': 1,
 };

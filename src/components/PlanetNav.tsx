@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { name: 'experience', path: '/experience', planet: 'Jupiter', color: '#D8CA9D', size: 1.2 },
   { name: 'saturn.', path: '/saturn', planet: 'Saturn', color: '#FAD5A5', size: 1.0 },
   { name: 'honors', path: '/honors', planet: 'Uranus', color: '#4FD0E7', size: 0.8 },
-  { name: 'life', path: '/life', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
+  { name: 'hobbies', path: '/hobbies', planet: 'Neptune', color: '#4B70DD', size: 0.75 },
   { name: 'skills', path: '/skills', planet: 'kuiper belt', color: '#7AA6D6', size: 0.45 },
   { name: 'contacts', path: '/contacts', planet: 'satellite', color: '#C0C7D6', size: 0.45 },
 ];
