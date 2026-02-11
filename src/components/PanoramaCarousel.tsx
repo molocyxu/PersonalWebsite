@@ -30,8 +30,17 @@ const STAR_VARIANT_MAP: Record<string, number> = {
   '/contacts': 1,
 };
 
+const normalizePathname = (rawPathname: string) => {
+  if (!rawPathname) return '/';
+  // strip query/hash just in case
+  const pathname = rawPathname.split('?')[0].split('#')[0] || '/';
+  if (pathname === '/') return '/';
+  // normalize trailing slash: "/education/" -> "/education"
+  return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+};
+
 const setDocumentTitleForPath = (path: string) => {
-  const normalized = path === '' ? '/' : path;
+  const normalized = normalizePathname(path === '' ? '/' : path);
   const page = PAGES.find(p => p.path === normalized);
   const title = page?.name ?? 'alex zheng';
   document.title = `${title} | alex zheng`;
@@ -51,7 +60,8 @@ export default function PanoramaCarousel() {
   const paneCount = useMemo(() => PAGES.length, []);
 
   const getIndexForPath = (path: string) => {
-    const index = PAGES.findIndex(p => p.path === path || (path === '' && p.path === '/'));
+    const normalized = normalizePathname(path === '' ? '/' : path);
+    const index = PAGES.findIndex(p => p.path === normalized);
     return index === -1 ? 0 : index;
   };
 
@@ -100,7 +110,9 @@ export default function PanoramaCarousel() {
       const contentRoot = doc.getElementById('page-content-root');
       if (!contentRoot) return;
 
-      contentRoot.querySelectorAll('nav, script, style, link').forEach(node => {
+      // IMPORTANT: do NOT strip <style> tags; some pages (e.g. hobbies) rely on inline CSS.
+      // We only strip scripts for safety.
+      contentRoot.querySelectorAll('script').forEach(node => {
         node.parentNode?.removeChild(node);
       });
 
@@ -175,7 +187,7 @@ export default function PanoramaCarousel() {
       const variants = [0, 1, 2].map((idx) => (window as any).__getStarVariant(idx));
       setStarVariants(variants);
     }
-    const initialIndex = getIndexForPath(window.location.pathname);
+    const initialIndex = getIndexForPath(normalizePathname(window.location.pathname));
     setActiveIndex(initialIndex);
     setPanoramaPosition(initialIndex);
     hydrateCurrentSlot(initialIndex);
@@ -185,7 +197,7 @@ export default function PanoramaCarousel() {
     window.dispatchEvent(new Event('panorama-path-change'));
 
     const handlePopState = () => {
-      const index = getIndexForPath(window.location.pathname);
+      const index = getIndexForPath(normalizePathname(window.location.pathname));
       setPanoramaPosition(index);
       setActiveIndex(index);
       loadPaneContent(PAGES[index].path, index);
@@ -197,7 +209,7 @@ export default function PanoramaCarousel() {
 
   useEffect(() => {
     const handlePanoramaPathChange = () => {
-      setDocumentTitleForPath(window.location.pathname);
+      setDocumentTitleForPath(normalizePathname(window.location.pathname));
     };
     window.addEventListener('panorama-path-change', handlePanoramaPathChange);
     return () => window.removeEventListener('panorama-path-change', handlePanoramaPathChange);
@@ -221,7 +233,7 @@ export default function PanoramaCarousel() {
     const handleNavigateEvent = (event: Event) => {
       const customEvent = event as CustomEvent<{ path?: string }>;
       if (!customEvent.detail?.path) return;
-      const targetIndex = getIndexForPath(customEvent.detail.path);
+      const targetIndex = getIndexForPath(normalizePathname(customEvent.detail.path));
       navigateToIndex(targetIndex);
     };
     window.addEventListener('panorama-navigate', handleNavigateEvent);
