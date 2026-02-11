@@ -1,6 +1,10 @@
 import { motion } from 'framer-motion';
 
-export default function MoveAroundHint() {
+interface MoveAroundHintProps {
+  text?: string;
+}
+
+export default function MoveAroundHint({ text = 'move & drag around!' }: MoveAroundHintProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -13,7 +17,7 @@ export default function MoveAroundHint() {
         transition={{ duration: 2, repeat: Infinity }}
         className="text-white/60 text-xs font-normal lowercase tracking-wide"
       >
-        move & drag around!
+        {text}
       </motion.div>
     </motion.div>
   );

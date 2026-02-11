@@ -1,104 +1,116 @@
-# Alex Zheng's Personal Website
+# Alex Zheng Personal Website
 
-A high-end personal website featuring an interactive 3D solar system with real-time planet tracking.
+Interactive personal site built with Astro + React, centered around a space-themed panorama and an explorable solar-system home scene.
 
-## Features
+## Tech Stack
 
-- **Interactive 3D Solar System**: Real-time planet tracking with accurate orbital mechanics
-- **EST Time Display**: Live clock showing Eastern Standard Time
-- **Smooth Navigation**: Click planets to navigate to different pages
-- **Modern UI**: High-end, polished interface with smooth animations
-- **Responsive Design**: Works beautifully on all devices
+- Astro 4 (`output: static`)
+- React 18 (`@astrojs/react`)
+- Tailwind CSS 3 (`@astrojs/tailwind`)
+- Three.js + React Three Fiber + Drei (home solar system)
+- Framer Motion (UI animation + motion interactions)
+- TypeScript
 
-## Development
+## Local Development
 
-### Prerequisites
+Prerequisites:
+- Node.js 18+ (Node 20 used in CI)
+- npm
 
-- Node.js 18+ and npm
-
-### Setup
+Install and run:
 
 ```bash
 npm install
 npm run dev
 ```
 
-The site will be available at `http://localhost:4321`
-
-### Build
+Build and preview:
 
 ```bash
 npm run build
-```
-
-The built site will be in the `dist/` directory.
-
-### Preview Production Build
-
-```bash
 npm run preview
 ```
 
+## Scripts
+
+- `npm run dev` / `npm start`: start Astro dev server
+- `npm run build`: production build to `dist/`
+- `npm run preview`: serve built output
+
+## Site Architecture
+
+This app uses a single persistent layout and client-side panorama navigation:
+
+- `src/layouts/Layout.astro`
+  - mounts global star/panorama background
+  - mounts top planet nav and panorama carousel
+  - provides hidden slot (`#page-slot`) used as the source DOM for page hydration into panorama panes
+- `src/components/PanoramaCarousel.tsx`
+  - defines page order and horizontal pane navigation
+  - supports keyboard arrows, swipe, nav events, and left/right buttons
+  - lazy-loads page content into panes via fetch + DOM parsing
+- `src/components/PlanetNav.tsx`
+  - fixed top planetary nav
+  - emits `panorama-navigate` events to control the carousel
+
+## Home Scene
+
+`src/pages/index.astro` renders:
+- `SolarSystem` (Three.js scene with Sun, planets, asteroid belt, Kuiper belt, satellite)
+- `UFOCursor` (custom cursor + hover beam behavior)
+- `TimeDisplay` (America/New_York clock)
+- `NameDisplay`, `HomepageNameCard`, `MoveAroundHint`
+- `ParallaxBackground` background motion logic
+
+## Routes
+
+- `/` home solar system
+- `/gallery` cursor-stamped gallery interactions
+- `/timeline` timeline page scaffold
+- `/projects` project cards
+- `/research` research cards
+- `/education` interactive asteroid-course field
+- `/experience` clickable Saturn-like rings with experience detail panel
+- `/saturn` dedicated Saturn visual page
+- `/honors` clickable rings with honors detail panel
+- `/hobbies` animated hobby objects (Rubik's cube, Tetris block, Set card)
+- `/skills` interactive comet-skill field
+- `/contacts` social/contact cards
+
+## Key Source Paths
+
+- `src/pages/*` page routes
+- `src/components/SolarSystem.tsx` 3D scene logic
+- `src/components/PanoramaCarousel.tsx` panoramic page system
+- `src/components/PlanetNav.tsx` top navigation
+- `src/components/ExperienceRings.tsx` / `src/components/HonorsRings.tsx` ring UIs
+- `src/components/GalleryMouseStamps.tsx` gallery effect
+- `src/styles/global.css` shared global styling/animations
+
+## Styling
+
+- Tailwind for utility styling
+- substantial custom CSS in `src/styles/global.css` for:
+  - magical hover/text effects
+  - asteroid/comet systems
+  - Saturn/Mars scenes
+  - ring panels/interactions
+  - panorama and transition behavior
+
 ## Deployment
 
-The site is automatically deployed to GitHub Pages via GitHub Actions when changes are pushed to the main branch.
+GitHub Actions workflow: `.github/workflows/deploy.yml`
 
-### GitHub Pages Setup
-
-1. Go to your repository Settings → Pages
-2. Under "Source", select "GitHub Actions"
-3. The workflow will automatically build and deploy on push to `main`
-
-### Domain Configuration
-
-To change the domain name:
-
-1. **For local development**: Update the `site` field in `astro.config.mjs`
-2. **For GitHub Pages**: 
-   - Add a secret named `SITE` in your repository settings (Settings → Secrets and variables → Actions)
-   - Set the value to your domain (e.g., `https://yourdomain.com`)
-   - If using a subdirectory, also add a `BASE_PATH` secret (e.g., `/repo-name`)
-
-The default placeholder domain is `zhalex414.com` and can be easily changed at any time.
-
-## Project Structure
-
-```
-/
-├── .github/workflows/    # GitHub Actions deployment workflow
-├── public/               # Static assets (favicon, etc.)
-├── src/
-│   ├── components/       # React components (SolarSystem, Navigation, etc.)
-│   ├── layouts/          # Astro layouts
-│   ├── pages/            # Route pages
-│   └── styles/           # Global styles
-├── astro.config.mjs      # Astro configuration
-├── package.json          # Dependencies
-└── tailwind.config.mjs   # Tailwind CSS configuration
-```
-
-## Technologies Used
-
-- **Astro**: Static site framework
-- **React**: UI components
-- **Three.js**: 3D graphics and solar system visualization
-- **React Three Fiber**: React renderer for Three.js
-- **Framer Motion**: Smooth animations
-- **Tailwind CSS**: Styling
-- **TypeScript**: Type safety
-
-## Pages
-
-- **Home** (`/`): Interactive solar system
-- **Projects** (`/projects`): Project showcase (to be filled)
-- **Timeline** (`/timeline`): Personal timeline (to be filled)
-- **Socials** (`/socials`): Social media links (to be filled)
-- **Resume** (`/resume`): Resume/CV (to be filled)
-- **Personal** (`/personal`): Personal information (to be filled)
+Behavior:
+- triggers on pushes to `main` (and manual dispatch)
+- installs dependencies with `npm ci`
+- builds with:
+  - `SITE` from `secrets.SITE` (fallback `https://zhalex414.com`)
+  - `BASE_PATH` from `secrets.BASE_PATH` (fallback `/`)
+- deploys `dist/` to GitHub Pages
 
 ## Notes
 
-- The solar system uses simplified orbital mechanics for visualization
-- Planet positions are calculated based on real orbital periods (scaled for visualization)
-- All UI elements are custom-styled (no browser-native elements)
-- The site is optimized for performance with high-quality graphics
+- panorama navigation is event-driven (`panorama-navigate` / `carousel-navigate`)
+- page title updates are handled client-side in the carousel based on the active route
+- `.npmrc` uses `legacy-peer-deps=true`

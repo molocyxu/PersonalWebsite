@@ -1320,6 +1320,33 @@ html {
   animation: gallery-stamp-in 280ms ease-out;
 }
 
+/* Pane-scoped hint text (bottom-left, same style as homepage hint) */
+.page-tip {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.page-tip-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+  animation: page-tip-pulse 2s infinite;
+}
+
+@keyframes page-tip-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @keyframes gallery-stamp-in {
   from {
     opacity: 0;
