@@ -6,7 +6,7 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [react(), tailwind()],
   output: 'static',
-  site: process.env.SITE || 'https://zhalex414.com',
+  site: process.env.SITE || 'https://alex-zheng.com',
   base: process.env.BASE_PATH || '/',
   vite: {
     build: {
