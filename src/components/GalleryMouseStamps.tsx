@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const VISIBLE_COUNT = 5;
 const IMAGE_WIDTH_VMIN = 24;
@@ -23,6 +23,8 @@ export default function GalleryMouseStamps({ imageSources = [] }: GalleryMouseSt
       ];
   const containerRef = useRef<HTMLDivElement>(null);
   const imagesLoadedRef = useRef<Set<string>>(new Set());
+  const hasMovedRef = useRef(false);
+  const [hasMoved, setHasMoved] = useState(false);
 
   // Preload all images immediately when component mounts
   useEffect(() => {
@@ -70,6 +72,11 @@ export default function GalleryMouseStamps({ imageSources = [] }: GalleryMouseSt
     };
 
     const handleMovePoint = (x: number, y: number) => {
+      if (!hasMovedRef.current) {
+        hasMovedRef.current = true;
+        setHasMoved(true);
+      }
+
       if (distanceFromLast(x, y) <= thresholdPx()) return;
 
       const lead = images[globalIndex % images.length];
@@ -101,6 +108,12 @@ export default function GalleryMouseStamps({ imageSources = [] }: GalleryMouseSt
 
   return (
     <div ref={containerRef} className="gallery-stamp-layer" aria-hidden="true">
+      {!hasMoved && (
+        <div className="gallery-move-mouse-hint">
+          <span>move mouse</span>
+        </div>
+      )}
+
       {IMAGE_SOURCES.map((src, index) => (
         <img
           key={src}

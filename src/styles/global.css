@@ -1875,6 +1875,25 @@ html {
   animation: gallery-stamp-in 280ms ease-out;
 }
 
+.gallery-move-mouse-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.gallery-move-mouse-hint span {
+  font-size: clamp(2.4rem, 9vw, 6.8rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.62);
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.22);
+}
+
 /* Pane-scoped hint text (bottom-left, same style as homepage hint) */
 .page-tip {
   position: absolute;
