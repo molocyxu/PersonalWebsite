@@ -12,8 +12,15 @@ type ExperienceItem = {
 
 const EXPERIENCES: ExperienceItem[] = [
   {
+    title: 'OpenAI',
+    role: 'Software Engineer Intern',
+    location: 'San Francisco, CA',
+    dates: 'Sep - Dec. 2026',
+    logo: '/logos/openai.png',
+  },
+  {
     title: 'Jane Street',
-    role: 'Incoming Quantitative Trader',
+    role: 'Quantitative Trader',
     location: 'New York, NY',
     dates: 'May - Aug. 2026',
     logo: '/logos/js.png',
@@ -46,12 +53,6 @@ const EXPERIENCES: ExperienceItem[] = [
       'Implemented and trained RNNs to improve crop yield forecasting accuracy',
       'Experimented with PyTorch for prototyping; used TensorFlow optimization features for final deployment',
     ],
-  },
-  {
-    title: 'coming soon...',
-    role: 'next experience loading',
-    location: 'to be announced',
-    dates: '...',
   },
 ];
 
